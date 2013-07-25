@@ -1,0 +1,502 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4343E3B917A05B7900E078E0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4343E3B817A05B7900E078E0 /* Foundation.framework */; };
+		4343E3BB17A05B7900E078E0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4343E3BA17A05B7900E078E0 /* CoreGraphics.framework */; };
+		4343E3BD17A05B7900E078E0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4343E3BC17A05B7900E078E0 /* UIKit.framework */; };
+		4343E3C317A05B7900E078E0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4343E3C117A05B7900E078E0 /* InfoPlist.strings */; };
+		4343E3C517A05B7900E078E0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4343E3C417A05B7900E078E0 /* main.m */; };
+		4343E3C917A05B7900E078E0 /* DAAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4343E3C817A05B7900E078E0 /* DAAppDelegate.m */; };
+		4343E3CC17A05B7900E078E0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4343E3CA17A05B7900E078E0 /* Main.storyboard */; };
+		4343E3CF17A05B7900E078E0 /* DAViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4343E3CE17A05B7900E078E0 /* DAViewController.m */; };
+		4343E3D117A05B7900E078E0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4343E3D017A05B7900E078E0 /* Images.xcassets */; };
+		4343E3D817A05B7A00E078E0 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4343E3D717A05B7A00E078E0 /* XCTest.framework */; };
+		4343E3D917A05B7A00E078E0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4343E3B817A05B7900E078E0 /* Foundation.framework */; };
+		4343E3DA17A05B7A00E078E0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4343E3BC17A05B7900E078E0 /* UIKit.framework */; };
+		4343E3E217A05B7A00E078E0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4343E3E017A05B7A00E078E0 /* InfoPlist.strings */; };
+		4343E3E417A05B7A00E078E0 /* DAContextMenuTableViewControllerDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4343E3E317A05B7A00E078E0 /* DAContextMenuTableViewControllerDemoTests.m */; };
+		4343E3F017A05BA700E078E0 /* DAContextMenuTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4343E3EF17A05BA700E078E0 /* DAContextMenuTableViewController.m */; };
+		4343E3F117A05BA700E078E0 /* DAContextMenuTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4343E3EF17A05BA700E078E0 /* DAContextMenuTableViewController.m */; };
+		4343E3F417A05FA100E078E0 /* DAContextMenuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4343E3F317A05FA100E078E0 /* DAContextMenuCell.m */; };
+		4343E3F517A05FA100E078E0 /* DAContextMenuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4343E3F317A05FA100E078E0 /* DAContextMenuCell.m */; };
+		4343E3F817A179FC00E078E0 /* DAOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4343E3F717A179FC00E078E0 /* DAOverlayView.m */; };
+		4343E3F917A179FC00E078E0 /* DAOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4343E3F717A179FC00E078E0 /* DAOverlayView.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4343E3DB17A05B7A00E078E0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4343E3AD17A05B7900E078E0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4343E3B417A05B7900E078E0;
+			remoteInfo = DAContextMenuTableViewControllerDemo;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		4343E3B517A05B7900E078E0 /* DAContextMenuTableViewControllerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DAContextMenuTableViewControllerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4343E3B817A05B7900E078E0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		4343E3BA17A05B7900E078E0 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		4343E3BC17A05B7900E078E0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		4343E3C017A05B7900E078E0 /* DAContextMenuTableViewControllerDemo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DAContextMenuTableViewControllerDemo-Info.plist"; sourceTree = "<group>"; };
+		4343E3C217A05B7900E078E0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		4343E3C417A05B7900E078E0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		4343E3C617A05B7900E078E0 /* DAContextMenuTableViewControllerDemo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DAContextMenuTableViewControllerDemo-Prefix.pch"; sourceTree = "<group>"; };
+		4343E3C717A05B7900E078E0 /* DAAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DAAppDelegate.h; sourceTree = "<group>"; };
+		4343E3C817A05B7900E078E0 /* DAAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DAAppDelegate.m; sourceTree = "<group>"; };
+		4343E3CB17A05B7900E078E0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		4343E3CD17A05B7900E078E0 /* DAViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DAViewController.h; sourceTree = "<group>"; };
+		4343E3CE17A05B7900E078E0 /* DAViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DAViewController.m; sourceTree = "<group>"; };
+		4343E3D017A05B7900E078E0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		4343E3D617A05B7A00E078E0 /* DAContextMenuTableViewControllerDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DAContextMenuTableViewControllerDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4343E3D717A05B7A00E078E0 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		4343E3DF17A05B7A00E078E0 /* DAContextMenuTableViewControllerDemoTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DAContextMenuTableViewControllerDemoTests-Info.plist"; sourceTree = "<group>"; };
+		4343E3E117A05B7A00E078E0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		4343E3E317A05B7A00E078E0 /* DAContextMenuTableViewControllerDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DAContextMenuTableViewControllerDemoTests.m; sourceTree = "<group>"; };
+		4343E3EE17A05BA700E078E0 /* DAContextMenuTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DAContextMenuTableViewController.h; path = ../DAContextMenuTableViewController/DAContextMenuTableViewController.h; sourceTree = "<group>"; };
+		4343E3EF17A05BA700E078E0 /* DAContextMenuTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DAContextMenuTableViewController.m; path = ../DAContextMenuTableViewController/DAContextMenuTableViewController.m; sourceTree = "<group>"; };
+		4343E3F217A05FA100E078E0 /* DAContextMenuCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DAContextMenuCell.h; path = ../DAContextMenuTableViewController/DAContextMenuCell.h; sourceTree = "<group>"; };
+		4343E3F317A05FA100E078E0 /* DAContextMenuCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DAContextMenuCell.m; path = ../DAContextMenuTableViewController/DAContextMenuCell.m; sourceTree = "<group>"; };
+		4343E3F617A179FC00E078E0 /* DAOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DAOverlayView.h; path = ../DAContextMenuTableViewController/DAOverlayView.h; sourceTree = "<group>"; };
+		4343E3F717A179FC00E078E0 /* DAOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DAOverlayView.m; path = ../DAContextMenuTableViewController/DAOverlayView.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4343E3B217A05B7900E078E0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4343E3BB17A05B7900E078E0 /* CoreGraphics.framework in Frameworks */,
+				4343E3BD17A05B7900E078E0 /* UIKit.framework in Frameworks */,
+				4343E3B917A05B7900E078E0 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4343E3D317A05B7A00E078E0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4343E3D817A05B7A00E078E0 /* XCTest.framework in Frameworks */,
+				4343E3DA17A05B7A00E078E0 /* UIKit.framework in Frameworks */,
+				4343E3D917A05B7A00E078E0 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4343E3AC17A05B7900E078E0 = {
+			isa = PBXGroup;
+			children = (
+				4343E3ED17A05B8500E078E0 /* DAContextMenuTableViewController */,
+				4343E3BE17A05B7900E078E0 /* DAContextMenuTableViewControllerDemo */,
+				4343E3DD17A05B7A00E078E0 /* DAContextMenuTableViewControllerDemoTests */,
+				4343E3B717A05B7900E078E0 /* Frameworks */,
+				4343E3B617A05B7900E078E0 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4343E3B617A05B7900E078E0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4343E3B517A05B7900E078E0 /* DAContextMenuTableViewControllerDemo.app */,
+				4343E3D617A05B7A00E078E0 /* DAContextMenuTableViewControllerDemoTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4343E3B717A05B7900E078E0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4343E3B817A05B7900E078E0 /* Foundation.framework */,
+				4343E3BA17A05B7900E078E0 /* CoreGraphics.framework */,
+				4343E3BC17A05B7900E078E0 /* UIKit.framework */,
+				4343E3D717A05B7A00E078E0 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4343E3BE17A05B7900E078E0 /* DAContextMenuTableViewControllerDemo */ = {
+			isa = PBXGroup;
+			children = (
+				4343E3C717A05B7900E078E0 /* DAAppDelegate.h */,
+				4343E3C817A05B7900E078E0 /* DAAppDelegate.m */,
+				4343E3CA17A05B7900E078E0 /* Main.storyboard */,
+				4343E3CD17A05B7900E078E0 /* DAViewController.h */,
+				4343E3CE17A05B7900E078E0 /* DAViewController.m */,
+				4343E3D017A05B7900E078E0 /* Images.xcassets */,
+				4343E3BF17A05B7900E078E0 /* Supporting Files */,
+			);
+			path = DAContextMenuTableViewControllerDemo;
+			sourceTree = "<group>";
+		};
+		4343E3BF17A05B7900E078E0 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				4343E3C017A05B7900E078E0 /* DAContextMenuTableViewControllerDemo-Info.plist */,
+				4343E3C117A05B7900E078E0 /* InfoPlist.strings */,
+				4343E3C417A05B7900E078E0 /* main.m */,
+				4343E3C617A05B7900E078E0 /* DAContextMenuTableViewControllerDemo-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		4343E3DD17A05B7A00E078E0 /* DAContextMenuTableViewControllerDemoTests */ = {
+			isa = PBXGroup;
+			children = (
+				4343E3E317A05B7A00E078E0 /* DAContextMenuTableViewControllerDemoTests.m */,
+				4343E3DE17A05B7A00E078E0 /* Supporting Files */,
+			);
+			path = DAContextMenuTableViewControllerDemoTests;
+			sourceTree = "<group>";
+		};
+		4343E3DE17A05B7A00E078E0 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				4343E3DF17A05B7A00E078E0 /* DAContextMenuTableViewControllerDemoTests-Info.plist */,
+				4343E3E017A05B7A00E078E0 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		4343E3ED17A05B8500E078E0 /* DAContextMenuTableViewController */ = {
+			isa = PBXGroup;
+			children = (
+				4343E3EE17A05BA700E078E0 /* DAContextMenuTableViewController.h */,
+				4343E3EF17A05BA700E078E0 /* DAContextMenuTableViewController.m */,
+				4343E3F217A05FA100E078E0 /* DAContextMenuCell.h */,
+				4343E3F317A05FA100E078E0 /* DAContextMenuCell.m */,
+				4343E3F617A179FC00E078E0 /* DAOverlayView.h */,
+				4343E3F717A179FC00E078E0 /* DAOverlayView.m */,
+			);
+			name = DAContextMenuTableViewController;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4343E3B417A05B7900E078E0 /* DAContextMenuTableViewControllerDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4343E3E717A05B7A00E078E0 /* Build configuration list for PBXNativeTarget "DAContextMenuTableViewControllerDemo" */;
+			buildPhases = (
+				4343E3B117A05B7900E078E0 /* Sources */,
+				4343E3B217A05B7900E078E0 /* Frameworks */,
+				4343E3B317A05B7900E078E0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DAContextMenuTableViewControllerDemo;
+			productName = DAContextMenuTableViewControllerDemo;
+			productReference = 4343E3B517A05B7900E078E0 /* DAContextMenuTableViewControllerDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4343E3D517A05B7A00E078E0 /* DAContextMenuTableViewControllerDemoTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4343E3EA17A05B7A00E078E0 /* Build configuration list for PBXNativeTarget "DAContextMenuTableViewControllerDemoTests" */;
+			buildPhases = (
+				4343E3D217A05B7A00E078E0 /* Sources */,
+				4343E3D317A05B7A00E078E0 /* Frameworks */,
+				4343E3D417A05B7A00E078E0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4343E3DC17A05B7A00E078E0 /* PBXTargetDependency */,
+			);
+			name = DAContextMenuTableViewControllerDemoTests;
+			productName = DAContextMenuTableViewControllerDemoTests;
+			productReference = 4343E3D617A05B7A00E078E0 /* DAContextMenuTableViewControllerDemoTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4343E3AD17A05B7900E078E0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = DA;
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = "Daria Kopaliani";
+				TargetAttributes = {
+					4343E3D517A05B7A00E078E0 = {
+						TestTargetID = 4343E3B417A05B7900E078E0;
+					};
+				};
+			};
+			buildConfigurationList = 4343E3B017A05B7900E078E0 /* Build configuration list for PBXProject "DAContextMenuTableViewControllerDemo" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4343E3AC17A05B7900E078E0;
+			productRefGroup = 4343E3B617A05B7900E078E0 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4343E3B417A05B7900E078E0 /* DAContextMenuTableViewControllerDemo */,
+				4343E3D517A05B7A00E078E0 /* DAContextMenuTableViewControllerDemoTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4343E3B317A05B7900E078E0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4343E3D117A05B7900E078E0 /* Images.xcassets in Resources */,
+				4343E3C317A05B7900E078E0 /* InfoPlist.strings in Resources */,
+				4343E3CC17A05B7900E078E0 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4343E3D417A05B7A00E078E0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4343E3E217A05B7A00E078E0 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4343E3B117A05B7900E078E0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4343E3F417A05FA100E078E0 /* DAContextMenuCell.m in Sources */,
+				4343E3C517A05B7900E078E0 /* main.m in Sources */,
+				4343E3CF17A05B7900E078E0 /* DAViewController.m in Sources */,
+				4343E3C917A05B7900E078E0 /* DAAppDelegate.m in Sources */,
+				4343E3F817A179FC00E078E0 /* DAOverlayView.m in Sources */,
+				4343E3F017A05BA700E078E0 /* DAContextMenuTableViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4343E3D217A05B7A00E078E0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4343E3F917A179FC00E078E0 /* DAOverlayView.m in Sources */,
+				4343E3E417A05B7A00E078E0 /* DAContextMenuTableViewControllerDemoTests.m in Sources */,
+				4343E3F117A05BA700E078E0 /* DAContextMenuTableViewController.m in Sources */,
+				4343E3F517A05FA100E078E0 /* DAContextMenuCell.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4343E3DC17A05B7A00E078E0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4343E3B417A05B7900E078E0 /* DAContextMenuTableViewControllerDemo */;
+			targetProxy = 4343E3DB17A05B7A00E078E0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		4343E3C117A05B7900E078E0 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4343E3C217A05B7900E078E0 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		4343E3CA17A05B7900E078E0 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4343E3CB17A05B7900E078E0 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		4343E3E017A05B7A00E078E0 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4343E3E117A05B7A00E078E0 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		4343E3E517A05B7A00E078E0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		4343E3E617A05B7A00E078E0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4343E3E817A05B7A00E078E0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DAContextMenuTableViewControllerDemo/DAContextMenuTableViewControllerDemo-Prefix.pch";
+				INFOPLIST_FILE = "DAContextMenuTableViewControllerDemo/DAContextMenuTableViewControllerDemo-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		4343E3E917A05B7A00E078E0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DAContextMenuTableViewControllerDemo/DAContextMenuTableViewControllerDemo-Prefix.pch";
+				INFOPLIST_FILE = "DAContextMenuTableViewControllerDemo/DAContextMenuTableViewControllerDemo-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		4343E3EB17A05B7A00E078E0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/DAContextMenuTableViewControllerDemo.app/DAContextMenuTableViewControllerDemo";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(SYSTEM_APPS_DIR)/Xcode5-DP3.app/Contents/Developer/Library/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DAContextMenuTableViewControllerDemo/DAContextMenuTableViewControllerDemo-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "DAContextMenuTableViewControllerDemoTests/DAContextMenuTableViewControllerDemoTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		4343E3EC17A05B7A00E078E0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/DAContextMenuTableViewControllerDemo.app/DAContextMenuTableViewControllerDemo";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(SYSTEM_APPS_DIR)/Xcode5-DP3.app/Contents/Developer/Library/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DAContextMenuTableViewControllerDemo/DAContextMenuTableViewControllerDemo-Prefix.pch";
+				INFOPLIST_FILE = "DAContextMenuTableViewControllerDemoTests/DAContextMenuTableViewControllerDemoTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4343E3B017A05B7900E078E0 /* Build configuration list for PBXProject "DAContextMenuTableViewControllerDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4343E3E517A05B7A00E078E0 /* Debug */,
+				4343E3E617A05B7A00E078E0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4343E3E717A05B7A00E078E0 /* Build configuration list for PBXNativeTarget "DAContextMenuTableViewControllerDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4343E3E817A05B7A00E078E0 /* Debug */,
+				4343E3E917A05B7A00E078E0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		4343E3EA17A05B7A00E078E0 /* Build configuration list for PBXNativeTarget "DAContextMenuTableViewControllerDemoTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4343E3EB17A05B7A00E078E0 /* Debug */,
+				4343E3EC17A05B7A00E078E0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4343E3AD17A05B7900E078E0 /* Project object */;
+}
