@@ -54,7 +54,7 @@
 
 - (void)contextMenuCellDidSelectMoreOption:(DAContextMenuCell *)cell
 {
-    
+    NSAssert(NO, @"Should be implemented in subclasses");
 }
 
 #pragma mark * DAOverlayView delegate
@@ -64,7 +64,6 @@
     BOOL shouldIterceptTouches = YES;
     CGRect rect = [self.view convertRect:self.cellDisplayingMenuOptions.frame toView:self.view];
     shouldIterceptTouches = CGRectContainsPoint(rect, point);
-    DAContextMenuCell *cell = self.cellDisplayingMenuOptions;
     if (!shouldIterceptTouches) {
         [self hideMenuOptionsAnimated:YES];
     }
@@ -81,4 +80,5 @@
     }
     return YES;
 }
+
 @end

@@ -10,7 +10,6 @@
 		4343E3B917A05B7900E078E0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4343E3B817A05B7900E078E0 /* Foundation.framework */; };
 		4343E3BB17A05B7900E078E0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4343E3BA17A05B7900E078E0 /* CoreGraphics.framework */; };
 		4343E3BD17A05B7900E078E0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4343E3BC17A05B7900E078E0 /* UIKit.framework */; };
-		4343E3C317A05B7900E078E0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4343E3C117A05B7900E078E0 /* InfoPlist.strings */; };
 		4343E3C517A05B7900E078E0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4343E3C417A05B7900E078E0 /* main.m */; };
 		4343E3C917A05B7900E078E0 /* DAAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4343E3C817A05B7900E078E0 /* DAAppDelegate.m */; };
 		4343E3CC17A05B7900E078E0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4343E3CA17A05B7900E078E0 /* Main.storyboard */; };
@@ -40,12 +39,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		43382D1517A27D740081584A /* en.lproj */ = {isa = PBXFileReference; lastKnownFileType = folder; path = en.lproj; sourceTree = "<group>"; };
 		4343E3B517A05B7900E078E0 /* DAContextMenuTableViewControllerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DAContextMenuTableViewControllerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4343E3B817A05B7900E078E0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4343E3BA17A05B7900E078E0 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		4343E3BC17A05B7900E078E0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		4343E3C017A05B7900E078E0 /* DAContextMenuTableViewControllerDemo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DAContextMenuTableViewControllerDemo-Info.plist"; sourceTree = "<group>"; };
-		4343E3C217A05B7900E078E0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		4343E3C417A05B7900E078E0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4343E3C617A05B7900E078E0 /* DAContextMenuTableViewControllerDemo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DAContextMenuTableViewControllerDemo-Prefix.pch"; sourceTree = "<group>"; };
 		4343E3C717A05B7900E078E0 /* DAAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DAAppDelegate.h; sourceTree = "<group>"; };
@@ -139,8 +138,8 @@
 		4343E3BF17A05B7900E078E0 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				43382D1517A27D740081584A /* en.lproj */,
 				4343E3C017A05B7900E078E0 /* DAContextMenuTableViewControllerDemo-Info.plist */,
-				4343E3C117A05B7900E078E0 /* InfoPlist.strings */,
 				4343E3C417A05B7900E078E0 /* main.m */,
 				4343E3C617A05B7900E078E0 /* DAContextMenuTableViewControllerDemo-Prefix.pch */,
 			);
@@ -256,7 +255,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4343E3D117A05B7900E078E0 /* Images.xcassets in Resources */,
-				4343E3C317A05B7900E078E0 /* InfoPlist.strings in Resources */,
 				4343E3CC17A05B7900E078E0 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -307,14 +305,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		4343E3C117A05B7900E078E0 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4343E3C217A05B7900E078E0 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
 		4343E3CA17A05B7900E078E0 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -410,6 +400,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DAContextMenuTableViewControllerDemo/DAContextMenuTableViewControllerDemo-Prefix.pch";
 				INFOPLIST_FILE = "DAContextMenuTableViewControllerDemo/DAContextMenuTableViewControllerDemo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -423,6 +414,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DAContextMenuTableViewControllerDemo/DAContextMenuTableViewControllerDemo-Prefix.pch";
 				INFOPLIST_FILE = "DAContextMenuTableViewControllerDemo/DAContextMenuTableViewControllerDemo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -487,6 +479,7 @@
 				4343E3E917A05B7A00E078E0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4343E3EA17A05B7A00E078E0 /* Build configuration list for PBXNativeTarget "DAContextMenuTableViewControllerDemoTests" */ = {
 			isa = XCConfigurationList;
@@ -495,6 +488,7 @@
 				4343E3EC17A05B7A00E078E0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

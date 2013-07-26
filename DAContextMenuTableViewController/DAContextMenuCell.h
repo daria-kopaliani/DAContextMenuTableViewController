@@ -26,11 +26,11 @@
 
 @property (strong, nonatomic) NSString *moreOptionsButtonTitle;
 @property (strong, nonatomic) NSString *deleteButtonTitle;
-//@property (strong, nonatomic) UIColor *backgroundColor;
 @property (assign, nonatomic) BOOL editable;
 @property (readonly, assign, nonatomic, getter = isContextMenuHidden) BOOL contextMenuHidden;
 @property (weak, nonatomic) id<DAContextMenuCellDelegate> delegate;
 
+- (CGFloat)menuOptionButtonWidth;
 - (void)setMenuOptionsViewHidden:(BOOL)hidden animated:(BOOL)animated;
 
 @end

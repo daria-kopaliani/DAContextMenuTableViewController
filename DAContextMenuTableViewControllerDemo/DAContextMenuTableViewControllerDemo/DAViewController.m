@@ -13,17 +13,36 @@
 
 @interface DAViewController ()
 
+@property (assign, nonatomic) NSInteger rowsCount;
+
 @end
+
 
 @implementation DAViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+    self.rowsCount = 20;
+    if ([[UIDevice currentDevice].systemVersion floatValue] >= 6.1) {
+        CGFloat statusBarHeight = CGRectGetHeight([[UIApplication sharedApplication] statusBarFrame]);
+        self.tableView.contentInset = UIEdgeInsetsMake(statusBarHeight, 0., 0., 0.);
+    }
+    self.tableView.allowsSelection = NO;
 }
 
-#pragma mark - Table view data source
+#pragma mark - Private
+
+- (void)setRowsCount:(NSInteger)rowsCount
+{
+    if (rowsCount < 0) {
+        _rowsCount = 0;
+    } else {
+        _rowsCount = rowsCount;
+    }
+}
+
+#pragma mark * Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -32,29 +51,39 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 20;
+    return self.rowsCount;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
-    DAContextMenuCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (!cell) {
-        cell = [[DAContextMenuCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-        cell.delegate = self;
-    }
-//    if (!cell) {
-
-    cell.textLabel.text = [NSString stringWithFormat:@"Cell number %d", indexPath.row];
-    cell.detailTextLabel.text = @"Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu";
-    cell.detailTextLabel.numberOfLines = 0;
-    // Configure the cell...
-    
+    DAContextMenuCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    cell.delegate = self;
     return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 50.;
+    return 95.;
 }
+
+#pragma mark * DAContextMenuCell delegate
+
+- (void)contextMenuCellDidSelectDeleteOption:(DAContextMenuCell *)cell
+{
+    self.rowsCount -= 1;
+    [self.tableView deleteRowsAtIndexPaths:@[[self.tableView indexPathForCell:cell]] withRowAnimation:UITableViewRowAnimationAutomatic];
+    
+}
+
+- (void)contextMenuCellDidSelectMoreOption:(DAContextMenuCell *)cell
+{
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+                                                             delegate:nil
+                                                    cancelButtonTitle:@"Cancel"
+                                               destructiveButtonTitle:nil
+                                                    otherButtonTitles:@"Reply", @"Forward", @"Flag", @"Mark as Unread", @"Move to Junk", @"Move Message...",  nil];
+    [actionSheet showInView:self.view];
+}
+
 @end

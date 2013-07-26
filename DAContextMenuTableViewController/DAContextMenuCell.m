@@ -48,16 +48,12 @@
     self.contextMenuView.backgroundColor = [UIColor clearColor];
     [self.contentView insertSubview:self.contextMenuView belowSubview:self.actualContentView];
     self.backgroundColor = [UIColor whiteColor];
-    UISwipeGestureRecognizer *swipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self
-                                                                                          action:@selector(handleSwipe)];
-    swipeRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
-    [self addGestureRecognizer:swipeRecognizer];
-    self.contextMenuHidden = YES;
+    self.contextMenuHidden = self.contextMenuView.hidden = YES;
     self.editable = YES;
     self.moreOptionsButtonTitle = @"More";
     self.deleteButtonTitle = @"Delete";
+    [self addGestureRecognizers];
     [self setNeedsLayout];
-    [self setMenuOptionsViewHidden:YES animated:NO];
 }
 
 #pragma mark - Public
@@ -65,20 +61,19 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
+    self.actualContentView.frame = self.bounds;
+    self.contextMenuView.frame = self.bounds;
     for (UIView *view in self.contentView.subviews) {
         if (view != self.actualContentView && view != self.contextMenuView) {
             [self.actualContentView addSubview:view];
         }
     }
     
-    self.actualContentView.frame = self.bounds;
-    CGFloat offset = 10.;
-    CGFloat moreOptionsButtonWidth = [self.moreOptionsButton.titleLabel.text sizeWithAttributes:@{NSFontAttributeName : self.moreOptionsButton.titleLabel.font}].width + 2. * offset;
-    CGFloat deleteButtonWidth = [self.deleteButton.titleLabel.text sizeWithAttributes:@{NSFontAttributeName : self.deleteButton.titleLabel.font}].width + 2. * offset;
     CGFloat height = CGRectGetHeight(self.bounds);
     CGFloat width = CGRectGetWidth(self.bounds);
-    self.moreOptionsButton.frame = CGRectMake(width - moreOptionsButtonWidth - deleteButtonWidth, 0., moreOptionsButtonWidth, height);
-    self.deleteButton.frame = CGRectMake(width - deleteButtonWidth, 0., deleteButtonWidth, height);
+    CGFloat menuOptionButtonWidth = [self menuOptionButtonWidth];
+    self.moreOptionsButton.frame = CGRectMake(width - 2 * menuOptionButtonWidth, 0., menuOptionButtonWidth, height);
+    self.deleteButton.frame = CGRectMake(width - menuOptionButtonWidth, 0., menuOptionButtonWidth, height);
 }
 
 - (void)setDeleteButtonTitle:(NSString *)deleteButtonTitle
@@ -95,24 +90,37 @@
     [self setNeedsLayout];
 }
 
+- (CGFloat)menuOptionButtonWidth
+{
+    NSString *string = ([self.deleteButtonTitle length] > [self.moreOptionsButtonTitle length]) ? self.deleteButtonTitle : self.moreOptionsButtonTitle;
+    CGFloat offset = 15.;
+    CGFloat width = [string sizeWithFont:self.moreOptionsButton.titleLabel.font].width + 2 * offset;
+    if (width > 90.) {
+        width = 90.;
+    }
+    return width;
+}
+
 - (void)setMenuOptionsViewHidden:(BOOL)hidden animated:(BOOL)animated
 {
+    if (self.selected) {
+        [self setSelected:NO animated:NO];
+    }
     self.deleteButton.userInteractionEnabled = self.moreOptionsButton.userInteractionEnabled = NO;
     if (hidden != self.isContextMenuHidden) {
         self.contextMenuHidden = hidden;
+        if (!hidden) {
+            self.contextMenuView.hidden = NO;
+        }
         CGFloat contextMenuWidth = CGRectGetWidth(self.moreOptionsButton.frame) + CGRectGetWidth(self.deleteButton.frame);
-        [UIView animateWithDuration:0.3 animations:^{
+        [UIView animateWithDuration:(animated) ? 0.3 : 0. animations:^{
             CGRect frame = self.actualContentView.frame;
             frame.origin.x = (hidden) ? 0. : -contextMenuWidth;
             self.actualContentView.frame = frame;
         } completion:^(BOOL finished) {
             self.actualContentView.userInteractionEnabled = hidden;
+            self.contextMenuView.hidden = hidden;
             if (!hidden) {
-                if (hidden) {
-                    [self.moreOptionsButton removeFromSuperview];
-                }
-                self.moreOptionsButton.alpha = (float)(!hidden);
-                self.contextMenuView.hidden = self.deleteButton.hidden = hidden;
                 self.deleteButton.userInteractionEnabled = self.moreOptionsButton .userInteractionEnabled = YES;
                 [self.delegate contextMenuDidShowInCell:self];
             }
@@ -120,12 +128,33 @@
     }
 }
 
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
+{
+    if (self.contextMenuHidden) {
+        [super setHighlighted:highlighted animated:animated];
+    }
+}
+
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
-    [super setSelected:selected animated:animated];
-//    self.contextMenuView.hidden
+    if (self.contextMenuHidden) {
+        [super setSelected:selected animated:animated];
+    }
 }
+
 #pragma mark - Private
+
+- (void)addGestureRecognizers
+{
+    UISwipeGestureRecognizer *leftSwipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self
+                                                                                              action:@selector(showMenuOptionsView)];
+    leftSwipeRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
+    [self addGestureRecognizer:leftSwipeRecognizer];
+    UISwipeGestureRecognizer *rightSwipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self
+                                                                                               action:@selector(hideMenuOptionsView)];
+    rightSwipeRecognizer.direction = UISwipeGestureRecognizerDirectionRight;
+    [self addGestureRecognizer:rightSwipeRecognizer];
+}
 
 - (void)deleteButtonTapped
 {
@@ -134,16 +163,21 @@
     }
 }
 
-- (void)handleSwipe
+- (void)moreButtonTapped
+{
+    [self.delegate contextMenuCellDidSelectMoreOption:self];
+}
+
+- (void)hideMenuOptionsView
+{
+    [self setMenuOptionsViewHidden:YES animated:YES];
+}
+
+- (void)showMenuOptionsView
 {
     if ([self.delegate shouldShowMenuOptionsViewInCell:self]) {
         [self setMenuOptionsViewHidden:NO animated:YES];
     }
-}
-
-- (void)moreButtonTapped
-{
-    [self.delegate contextMenuCellDidSelectMoreOption:self];
 }
 
 #pragma mark * Lazy getters
