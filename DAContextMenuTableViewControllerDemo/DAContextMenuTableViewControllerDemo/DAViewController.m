@@ -26,10 +26,6 @@
     
     self.title = @"DAContextMenuTableViewController";
     self.rowsCount = 20;
-    if ([[UIDevice currentDevice].systemVersion floatValue] >= 6.1) {
-        CGFloat statusBarHeight = CGRectGetHeight([[UIApplication sharedApplication] statusBarFrame]);
-        self.tableView.contentInset = UIEdgeInsetsMake(statusBarHeight, 0., 0., 0.);
-    }
     self.tableView.allowsSelection = NO;
 }
 
