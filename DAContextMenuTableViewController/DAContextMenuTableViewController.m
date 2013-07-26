@@ -62,12 +62,13 @@
 - (UIView *)overlayView:(DAOverlayView *)view didHitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
     BOOL shouldIterceptTouches = YES;
+    CGPoint location = [self.view convertPoint:point fromView:view];
     CGRect rect = [self.view convertRect:self.cellDisplayingMenuOptions.frame toView:self.view];
-    shouldIterceptTouches = CGRectContainsPoint(rect, point);
+    shouldIterceptTouches = CGRectContainsPoint(rect, location);
     if (!shouldIterceptTouches) {
         [self hideMenuOptionsAnimated:YES];
     }
-    return (shouldIterceptTouches) ? nil : view;
+    return (shouldIterceptTouches) ? [self.cellDisplayingMenuOptions hitTest:point withEvent:event] : view;
 }
 
 #pragma mark  * UITableView delegate
