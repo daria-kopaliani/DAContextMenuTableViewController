@@ -23,6 +23,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.title = @"DAContextMenuTableViewController";
     self.rowsCount = 20;
     if ([[UIDevice currentDevice].systemVersion floatValue] >= 6.1) {
         CGFloat statusBarHeight = CGRectGetHeight([[UIApplication sharedApplication] statusBarFrame]);
