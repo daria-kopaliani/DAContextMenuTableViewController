@@ -13,7 +13,6 @@
 @property (strong, nonatomic) UIView *contextMenuView;
 @property (strong, nonatomic) UIButton *moreOptionsButton;
 @property (strong, nonatomic) UIButton *deleteButton;
-@property (strong, nonatomic) UIView *actualContentView;
 @property (assign, nonatomic, getter = isContextMenuHidden) BOOL contextMenuHidden;
 
 @end
@@ -40,11 +39,7 @@
 
 - (void)setUp
 {
-    self.actualContentView = [[UIView alloc] initWithFrame:self.bounds];
-    [self.actualContentView setBackgroundColor:[UIColor whiteColor]];
-    [self.contentView addSubview:self.actualContentView];
-    
-    self.contextMenuView = [[UIView alloc] initWithFrame:self.bounds];
+    self.contextMenuView = [[UIView alloc] initWithFrame:self.actualContentView.bounds];
     self.contextMenuView.backgroundColor = [UIColor clearColor];
     [self.contentView insertSubview:self.contextMenuView belowSubview:self.actualContentView];
     self.backgroundColor = [UIColor whiteColor];
@@ -61,13 +56,9 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    self.actualContentView.frame = self.bounds;
-    self.contextMenuView.frame = self.bounds;
-    for (UIView *view in self.contentView.subviews) {
-        if (view != self.actualContentView && view != self.contextMenuView) {
-            [self.actualContentView addSubview:view];
-        }
-    }
+    self.contextMenuView.frame = self.actualContentView.bounds;
+    [self.contentView sendSubviewToBack:self.contextMenuView];
+    [self.contentView bringSubviewToFront:self.actualContentView];
     
     CGFloat height = CGRectGetHeight(self.bounds);
     CGFloat width = CGRectGetWidth(self.bounds);

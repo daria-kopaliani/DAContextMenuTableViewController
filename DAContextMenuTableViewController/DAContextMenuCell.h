@@ -24,6 +24,7 @@
 
 @interface DAContextMenuCell : UITableViewCell
 
+@property (strong, nonatomic) IBOutlet UIView *actualContentView;
 @property (strong, nonatomic) NSString *moreOptionsButtonTitle;
 @property (strong, nonatomic) NSString *deleteButtonTitle;
 @property (assign, nonatomic) BOOL editable;
