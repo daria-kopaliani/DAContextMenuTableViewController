@@ -26,7 +26,7 @@
     
     self.title = @"DAContextMenuTableViewController";
     self.rowsCount = 20;
-    self.tableView.allowsSelection = NO;
+//    self.tableView.allowsSelection = NO;
 }
 
 #pragma mark - Private
@@ -69,6 +69,7 @@
 
 - (void)contextMenuCellDidSelectDeleteOption:(DAContextMenuCell *)cell
 {
+    [super contextMenuCellDidSelectDeleteOption:cell];
     self.rowsCount -= 1;
     [self.tableView deleteRowsAtIndexPaths:@[[self.tableView indexPathForCell:cell]] withRowAnimation:UITableViewRowAnimationAutomatic];
     

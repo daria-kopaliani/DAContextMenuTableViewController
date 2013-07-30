@@ -8,12 +8,14 @@
 
 #import "DAContextMenuCell.h"
 
-@interface DAContextMenuCell ()
+@interface DAContextMenuCell () <UIGestureRecognizerDelegate>
 
 @property (strong, nonatomic) UIView *contextMenuView;
 @property (strong, nonatomic) UIButton *moreOptionsButton;
 @property (strong, nonatomic) UIButton *deleteButton;
 @property (assign, nonatomic, getter = isContextMenuHidden) BOOL contextMenuHidden;
+@property (assign, nonatomic) BOOL shouldDisplayContextMenuView;
+@property (assign, nonatomic) CGFloat initialTouchPositionX;
 
 @end
 
@@ -44,10 +46,15 @@
     [self.contentView insertSubview:self.contextMenuView belowSubview:self.actualContentView];
     self.backgroundColor = [UIColor whiteColor];
     self.contextMenuHidden = self.contextMenuView.hidden = YES;
+    self.shouldDisplayContextMenuView = NO;
     self.editable = YES;
     self.moreOptionsButtonTitle = @"More";
     self.deleteButtonTitle = @"Delete";
-    [self addGestureRecognizers];
+    self.menuOptionButtonTitlePadding = 25.;
+    self.menuOptionsAnimationDuration = 0.3;
+    UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
+    panRecognizer.delegate = self;
+    [self addGestureRecognizer:panRecognizer];
     [self setNeedsLayout];
 }
 
@@ -67,11 +74,70 @@
     self.deleteButton.frame = CGRectMake(width - menuOptionButtonWidth, 0., menuOptionButtonWidth, height);
 }
 
+- (CGFloat)menuOptionButtonWidth
+{
+    NSString *string = ([self.deleteButtonTitle length] > [self.moreOptionsButtonTitle length]) ? self.deleteButtonTitle : self.moreOptionsButtonTitle;
+    CGFloat width = roundf([string sizeWithFont:self.moreOptionsButton.titleLabel.font].width + 2. * self.menuOptionButtonTitlePadding);
+    width = MIN(width, CGRectGetWidth(self.bounds) / 2. - 10.);
+    if ((NSInteger)width % 2) {
+        width += 1.;
+    }
+    return width;
+}
+
 - (void)setDeleteButtonTitle:(NSString *)deleteButtonTitle
 {
     _deleteButtonTitle = deleteButtonTitle;
     [self.deleteButton setTitle:deleteButtonTitle forState:UIControlStateNormal];
     [self setNeedsLayout];
+}
+
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
+{
+    if (self.contextMenuHidden) {
+        self.contextMenuView.hidden = YES;
+        [super setHighlighted:highlighted animated:animated];
+    }
+}
+
+- (void)setMenuOptionButtonTitlePadding:(CGFloat)menuOptionButtonTitlePadding
+{
+    if (_menuOptionButtonTitlePadding != menuOptionButtonTitlePadding) {
+        _menuOptionButtonTitlePadding = menuOptionButtonTitlePadding;
+        [self setNeedsLayout];
+    }
+}
+
+- (void)setMenuOptionsViewHidden:(BOOL)hidden animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler
+{
+    if (self.selected) {
+        [self setSelected:NO animated:NO];
+    }
+    if (self.isContextMenuHidden == hidden) {
+        if (completionHandler) {
+            completionHandler();
+        }
+    } else {
+        CGRect frame = CGRectMake((hidden) ? 0 : -2. * [self menuOptionButtonWidth], 0, CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
+        [UIView animateWithDuration:(animated) ? self.menuOptionsAnimationDuration : 0.
+                              delay:0.
+                            options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut
+                         animations:^
+         {
+             self.actualContentView.frame = frame;
+         } completion:^(BOOL finished) {
+             self.contextMenuHidden = hidden;
+             self.shouldDisplayContextMenuView = !hidden;
+             if (!hidden) {
+                 [self.delegate contextMenuDidShowInCell:self];
+             } else {
+                 [self.delegate contextMenuDidHideInCell:self];
+             }
+             if (completionHandler) {
+                 completionHandler();
+             }
+         }];
+    }
 }
 
 - (void)setMoreOptionsButtonTitle:(NSString *)moreOptionsButtonTitle
@@ -81,70 +147,54 @@
     [self setNeedsLayout];
 }
 
-- (CGFloat)menuOptionButtonWidth
-{
-    NSString *string = ([self.deleteButtonTitle length] > [self.moreOptionsButtonTitle length]) ? self.deleteButtonTitle : self.moreOptionsButtonTitle;
-    CGFloat offset = 15.;
-    CGFloat width = [string sizeWithFont:self.moreOptionsButton.titleLabel.font].width + 2 * offset;
-    if (width > 90.) {
-        width = 90.;
-    }
-    return width;
-}
-
-- (void)setMenuOptionsViewHidden:(BOOL)hidden animated:(BOOL)animated
-{
-    if (self.selected) {
-        [self setSelected:NO animated:NO];
-    }
-    self.deleteButton.userInteractionEnabled = self.moreOptionsButton.userInteractionEnabled = NO;
-    if (hidden != self.isContextMenuHidden) {
-        self.contextMenuHidden = hidden;
-        if (!hidden) {
-            self.contextMenuView.hidden = NO;
-        }
-        CGFloat contextMenuWidth = CGRectGetWidth(self.moreOptionsButton.frame) + CGRectGetWidth(self.deleteButton.frame);
-        [UIView animateWithDuration:(animated) ? 0.3 : 0. animations:^{
-            CGRect frame = self.actualContentView.frame;
-            frame.origin.x = (hidden) ? 0. : -contextMenuWidth;
-            self.actualContentView.frame = frame;
-        } completion:^(BOOL finished) {
-            self.actualContentView.userInteractionEnabled = hidden;
-            self.contextMenuView.hidden = hidden;
-            if (!hidden) {
-                self.deleteButton.userInteractionEnabled = self.moreOptionsButton .userInteractionEnabled = YES;
-                [self.delegate contextMenuDidShowInCell:self];
-            }
-        }];
-    }
-}
-
-- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
-{
-    if (self.contextMenuHidden) {
-        [super setHighlighted:highlighted animated:animated];
-    }
-}
-
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
     if (self.contextMenuHidden) {
+        self.contextMenuView.hidden = YES;
         [super setSelected:selected animated:animated];
     }
 }
 
 #pragma mark - Private
 
-- (void)addGestureRecognizers
+- (void)handlePan:(UIPanGestureRecognizer *)recognizer;
 {
-    UISwipeGestureRecognizer *leftSwipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self
-                                                                                              action:@selector(showMenuOptionsView)];
-    leftSwipeRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
-    [self addGestureRecognizer:leftSwipeRecognizer];
-    UISwipeGestureRecognizer *rightSwipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self
-                                                                                               action:@selector(hideMenuOptionsView)];
-    rightSwipeRecognizer.direction = UISwipeGestureRecognizerDirectionRight;
-    [self addGestureRecognizer:rightSwipeRecognizer];
+    if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
+        UIPanGestureRecognizer *panRecognizer = (UIPanGestureRecognizer *)recognizer;
+        
+        CGPoint currentTouchPoint = [panRecognizer locationInView:self.contentView];
+        CGFloat currentTouchPositionX = currentTouchPoint.x;
+        
+        if (recognizer.state == UIGestureRecognizerStateBegan) {
+            self.initialTouchPositionX = currentTouchPositionX;
+        } else if (recognizer.state == UIGestureRecognizerStateChanged) {
+            CGPoint velocity = [recognizer velocityInView:self.contentView];
+            if (!self.contextMenuHidden || (velocity.x > 0. || [self.delegate shouldShowMenuOptionsViewInCell:self])) {
+                if (self.selected) {
+                    [self setSelected:NO animated:NO];
+                }
+                self.contextMenuView.hidden = NO;
+                CGFloat panAmount = currentTouchPositionX - self.initialTouchPositionX;
+                self.initialTouchPositionX = currentTouchPositionX;
+                CGFloat contextMenuWidth = 2 * [self menuOptionButtonWidth];
+                CGFloat minOriginX = - contextMenuWidth - 30.;
+                CGFloat maxOriginX = 0.;
+                CGFloat originX = CGRectGetMinX(self.actualContentView.frame) + panAmount;
+                originX = MIN(maxOriginX, originX);
+                originX = MAX(minOriginX, originX);
+                
+                
+                if ((originX < -0.5 * contextMenuWidth && velocity.x < 0.) || velocity.x < -100) {
+                    self.shouldDisplayContextMenuView = YES;
+                } else if ((originX > -0.3 * contextMenuWidth && velocity.x > 0.) || velocity.x > 100) {
+                    self.shouldDisplayContextMenuView = NO;
+                }
+                self.actualContentView.frame = CGRectMake(originX, 0., CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
+            }
+        } else if (recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled) {
+            [self setMenuOptionsViewHidden:!self.shouldDisplayContextMenuView animated:YES completionHandler:nil];
+        }
+    }
 }
 
 - (void)deleteButtonTapped
@@ -159,16 +209,10 @@
     [self.delegate contextMenuCellDidSelectMoreOption:self];
 }
 
-- (void)hideMenuOptionsView
+- (void)prepareForReuse
 {
-    [self setMenuOptionsViewHidden:YES animated:YES];
-}
-
-- (void)showMenuOptionsView
-{
-    if ([self.delegate shouldShowMenuOptionsViewInCell:self]) {
-        [self setMenuOptionsViewHidden:NO animated:YES];
-    }
+    [super prepareForReuse];
+    [self setMenuOptionsViewHidden:YES animated:NO completionHandler:nil];
 }
 
 #pragma mark * Lazy getters
@@ -198,6 +242,14 @@
         return _deleteButton;
     }
     return nil;
+}
+
+#pragma mark * UIPanGestureRecognizer delegate
+
+- (BOOL)gestureRecognizerShouldBegin:(UIPanGestureRecognizer *)panGestureRecognizer
+{
+    CGPoint translation = [panGestureRecognizer translationInView:self];
+    return fabs(translation.x) > fabs(translation.y);
 }
 
 @end

@@ -13,9 +13,10 @@
 
 @protocol DAContextMenuCellDelegate <NSObject>
 
-- (BOOL)shouldShowMenuOptionsViewInCell:(DAContextMenuCell *)cell;
-- (void)contextMenuDidShowInCell:(DAContextMenuCell *)cell;
 - (void)contextMenuCellDidSelectMoreOption:(DAContextMenuCell *)cell;
+- (void)contextMenuDidHideInCell:(DAContextMenuCell *)cell;
+- (void)contextMenuDidShowInCell:(DAContextMenuCell *)cell;
+- (BOOL)shouldShowMenuOptionsViewInCell:(DAContextMenuCell *)cell;
 @optional
 - (void)contextMenuCellDidSelectDeleteOption:(DAContextMenuCell *)cell;
 
@@ -25,13 +26,16 @@
 @interface DAContextMenuCell : UITableViewCell
 
 @property (strong, nonatomic) IBOutlet UIView *actualContentView;
-@property (strong, nonatomic) NSString *moreOptionsButtonTitle;
+
+@property (readonly, assign, nonatomic, getter = isContextMenuHidden) BOOL contextMenuHidden;
 @property (strong, nonatomic) NSString *deleteButtonTitle;
 @property (assign, nonatomic) BOOL editable;
-@property (readonly, assign, nonatomic, getter = isContextMenuHidden) BOOL contextMenuHidden;
+@property (assign, nonatomic) CGFloat menuOptionButtonTitlePadding;
+@property (assign, nonatomic) CGFloat menuOptionsAnimationDuration;
+@property (strong, nonatomic) NSString *moreOptionsButtonTitle;
+
 @property (weak, nonatomic) id<DAContextMenuCellDelegate> delegate;
 
-- (CGFloat)menuOptionButtonWidth;
-- (void)setMenuOptionsViewHidden:(BOOL)hidden animated:(BOOL)animated;
+- (void)setMenuOptionsViewHidden:(BOOL)hidden animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler;
 
 @end

@@ -15,46 +15,85 @@
 
 @property (strong, nonatomic) DAContextMenuCell *cellDisplayingMenuOptions;
 @property (strong, nonatomic) DAOverlayView *overlayView;
+@property (assign, nonatomic) BOOL customEditing;
+@property (strong, nonatomic) UIBarButtonItem *editBarButtonItem;
+@property (strong, nonatomic) UIBarButtonItem *doneBarButtonItem;
 
 @end
 
 
 @implementation DAContextMenuTableViewController
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    self.customEditing = NO;
+}
+
 #pragma mark - Private
 
 - (void)hideMenuOptionsAnimated:(BOOL)animated
 {
-    [self.cellDisplayingMenuOptions setMenuOptionsViewHidden:YES animated:animated];
-    self.cellDisplayingMenuOptions = nil;
-    [self.overlayView removeFromSuperview];
+    __block DAContextMenuTableViewController *weakSelf = self;
+    [self.cellDisplayingMenuOptions setMenuOptionsViewHidden:YES animated:animated completionHandler:^{
+        weakSelf.customEditing = NO;
+    }];
+}
+
+- (void)setCustomEditing:(BOOL)customEditing
+{
+    if (_customEditing != customEditing) {
+        _customEditing = customEditing;
+        self.tableView.scrollEnabled = !customEditing;
+        if (customEditing) {
+            if (!_overlayView) {
+                _overlayView = [[DAOverlayView alloc] initWithFrame:self.view.bounds];
+                _overlayView.backgroundColor = [UIColor clearColor];
+                _overlayView.delegate = self;
+            }
+            self.overlayView.frame = self.view.bounds;
+            [self.view addSubview:_overlayView];
+            for (UIView *view in self.tableView.subviews) {
+                if (view != self.cellDisplayingMenuOptions && view != self.overlayView) {
+                    view.userInteractionEnabled = NO;
+                }
+            }
+        } else {
+            self.cellDisplayingMenuOptions = nil;
+            [self.overlayView removeFromSuperview];
+            for (UIView *view in self.tableView.subviews) {
+                view.userInteractionEnabled = YES;
+            }
+        }
+    }
 }
 
 #pragma mark * DAContextMenuCell delegate
 
-- (BOOL)shouldShowMenuOptionsViewInCell:(DAContextMenuCell *)cell
+- (void)contextMenuDidHideInCell:(DAContextMenuCell *)cell
 {
-    BOOL result = (self.cellDisplayingMenuOptions == nil);
-    [self hideMenuOptionsAnimated:YES];
-    return result;
+    self.customEditing = NO;
 }
 
 - (void)contextMenuDidShowInCell:(DAContextMenuCell *)cell
 {
     self.cellDisplayingMenuOptions = cell;
-    if (!_overlayView) {
-        _overlayView = [[DAOverlayView alloc] initWithFrame:self.view.bounds];
-        _overlayView.backgroundColor = [UIColor clearColor];
-        _overlayView.delegate = self;
-    }
-    self.overlayView.hidden = NO;
-    self.overlayView.frame = self.view.bounds;
-    [self.view addSubview:_overlayView];
+    self.customEditing = YES;
 }
 
 - (void)contextMenuCellDidSelectMoreOption:(DAContextMenuCell *)cell
 {
     NSAssert(NO, @"Should be implemented in subclasses");
+}
+
+- (void)contextMenuCellDidSelectDeleteOption:(DAContextMenuCell *)cell
+{
+    self.customEditing = NO;
+}
+
+- (BOOL)shouldShowMenuOptionsViewInCell:(DAContextMenuCell *)cell
+{
+    return !self.customEditing;
 }
 
 #pragma mark * DAOverlayView delegate
@@ -71,7 +110,7 @@
     return (shouldIterceptTouches) ? [self.cellDisplayingMenuOptions hitTest:point withEvent:event] : view;
 }
 
-#pragma mark  * UITableView delegate
+#pragma mark * UITableView delegate
 
 - (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath
 {
