@@ -12,6 +12,6 @@ But theres is no width for Delete button (which may vary for different languages
 TODO
 ==============
 
-- bounce animation
+- <del>bounce animation</del>
 - better handling of rotation animation
 - iOS7-like look for iOS 6 context menu action sheet
