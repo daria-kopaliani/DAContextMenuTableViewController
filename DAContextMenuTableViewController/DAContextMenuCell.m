@@ -60,6 +60,11 @@
 
 #pragma mark - Public
 
+- (CGFloat)contextMenuWidth
+{
+    return CGRectGetWidth(self.deleteButton.frame) + CGRectGetWidth(self.moreOptionsButton.frame);
+}
+
 - (void)layoutSubviews
 {
     [super layoutSubviews];
@@ -158,11 +163,6 @@
 }
 
 #pragma mark - Private
-
-- (CGFloat)contextMenuWidth
-{
-    return CGRectGetWidth(self.deleteButton.frame) + CGRectGetWidth(self.moreOptionsButton.frame);
-}
 
 - (void)handlePan:(UIPanGestureRecognizer *)recognizer;
 {
