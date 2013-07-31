@@ -121,31 +121,25 @@
     if (self.selected) {
         [self setSelected:NO animated:NO];
     }
-    if (self.isContextMenuHidden == hidden) {
-        if (completionHandler) {
-            completionHandler();
-        }
-    } else {
-        CGRect frame = CGRectMake((hidden) ? 0 : -[self contextMenuWidth], 0, CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
-        [UIView animateWithDuration:(animated) ? self.menuOptionsAnimationDuration : 0.
-                              delay:0.
-                            options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut
-                         animations:^
-         {
-             self.actualContentView.frame = frame;
-         } completion:^(BOOL finished) {
-             self.contextMenuHidden = hidden;
-             self.shouldDisplayContextMenuView = !hidden;
-             if (!hidden) {
-                 [self.delegate contextMenuDidShowInCell:self];
-             } else {
-                 [self.delegate contextMenuDidHideInCell:self];
-             }
-             if (completionHandler) {
-                 completionHandler();
-             }
-         }];
-    }
+    CGRect frame = CGRectMake((hidden) ? 0 : -[self contextMenuWidth], 0, CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
+    [UIView animateWithDuration:(animated) ? self.menuOptionsAnimationDuration : 0.
+                          delay:0.
+                        options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut
+                     animations:^
+     {
+         self.actualContentView.frame = frame;
+     } completion:^(BOOL finished) {
+         self.contextMenuHidden = hidden;
+         self.shouldDisplayContextMenuView = !hidden;
+         if (!hidden) {
+             [self.delegate contextMenuDidShowInCell:self];
+         } else {
+             [self.delegate contextMenuDidHideInCell:self];
+         }
+         if (completionHandler) {
+             completionHandler();
+         }
+     }];
 }
 
 - (void)setMoreOptionsButtonTitle:(NSString *)moreOptionsButtonTitle
