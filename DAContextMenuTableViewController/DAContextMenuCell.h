@@ -32,6 +32,7 @@
 @property (assign, nonatomic) BOOL editable;
 @property (assign, nonatomic) CGFloat menuOptionButtonTitlePadding;
 @property (assign, nonatomic) CGFloat menuOptionsAnimationDuration;
+@property (assign, nonatomic) CGFloat bounceValue;
 @property (strong, nonatomic) NSString *moreOptionsButtonTitle;
 
 @property (weak, nonatomic) id<DAContextMenuCellDelegate> delegate;

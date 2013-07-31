@@ -42,9 +42,8 @@
 - (void)setUp
 {
     self.contextMenuView = [[UIView alloc] initWithFrame:self.actualContentView.bounds];
-    self.contextMenuView.backgroundColor = [UIColor clearColor];
+    self.contextMenuView.backgroundColor = self.contentView.backgroundColor;
     [self.contentView insertSubview:self.contextMenuView belowSubview:self.actualContentView];
-    self.backgroundColor = [UIColor whiteColor];
     self.contextMenuHidden = self.contextMenuView.hidden = YES;
     self.shouldDisplayContextMenuView = NO;
     self.editable = YES;
@@ -52,6 +51,7 @@
     self.deleteButtonTitle = @"Delete";
     self.menuOptionButtonTitlePadding = 25.;
     self.menuOptionsAnimationDuration = 0.3;
+    self.bounceValue = 30.;
     UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
     panRecognizer.delegate = self;
     [self addGestureRecognizer:panRecognizer];
@@ -70,7 +70,7 @@
     CGFloat height = CGRectGetHeight(self.bounds);
     CGFloat width = CGRectGetWidth(self.bounds);
     CGFloat menuOptionButtonWidth = [self menuOptionButtonWidth];
-    self.moreOptionsButton.frame = CGRectMake(width - 2 * menuOptionButtonWidth, 0., menuOptionButtonWidth, height);
+    self.moreOptionsButton.frame = CGRectMake(width - menuOptionButtonWidth - CGRectGetWidth(self.deleteButton.frame), 0., menuOptionButtonWidth, height);
     self.deleteButton.frame = CGRectMake(width - menuOptionButtonWidth, 0., menuOptionButtonWidth, height);
 }
 
@@ -90,6 +90,14 @@
     _deleteButtonTitle = deleteButtonTitle;
     [self.deleteButton setTitle:deleteButtonTitle forState:UIControlStateNormal];
     [self setNeedsLayout];
+}
+
+- (void)setEditable:(BOOL)editable
+{
+    if (_editable != editable) {
+        _editable = editable;
+        [self setNeedsLayout];
+    }
 }
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
@@ -118,7 +126,7 @@
             completionHandler();
         }
     } else {
-        CGRect frame = CGRectMake((hidden) ? 0 : -2. * [self menuOptionButtonWidth], 0, CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
+        CGRect frame = CGRectMake((hidden) ? 0 : -[self contextMenuWidth], 0, CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
         [UIView animateWithDuration:(animated) ? self.menuOptionsAnimationDuration : 0.
                               delay:0.
                             options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut
@@ -157,6 +165,11 @@
 
 #pragma mark - Private
 
+- (CGFloat)contextMenuWidth
+{
+    return CGRectGetWidth(self.deleteButton.frame) + CGRectGetWidth(self.moreOptionsButton.frame);
+}
+
 - (void)handlePan:(UIPanGestureRecognizer *)recognizer;
 {
     if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
@@ -176,17 +189,16 @@
                 self.contextMenuView.hidden = NO;
                 CGFloat panAmount = currentTouchPositionX - self.initialTouchPositionX;
                 self.initialTouchPositionX = currentTouchPositionX;
-                CGFloat contextMenuWidth = 2 * [self menuOptionButtonWidth];
-                CGFloat minOriginX = - contextMenuWidth - 30.;
+                CGFloat minOriginX = -[self contextMenuWidth] - self.bounceValue;
                 CGFloat maxOriginX = 0.;
                 CGFloat originX = CGRectGetMinX(self.actualContentView.frame) + panAmount;
                 originX = MIN(maxOriginX, originX);
                 originX = MAX(minOriginX, originX);
                 
                 
-                if ((originX < -0.5 * contextMenuWidth && velocity.x < 0.) || velocity.x < -100) {
+                if ((originX < -0.5 * [self contextMenuWidth] && velocity.x < 0.) || velocity.x < -100) {
                     self.shouldDisplayContextMenuView = YES;
-                } else if ((originX > -0.3 * contextMenuWidth && velocity.x > 0.) || velocity.x > 100) {
+                } else if ((originX > -0.3 * [self contextMenuWidth] && velocity.x > 0.) || velocity.x > 100) {
                     self.shouldDisplayContextMenuView = NO;
                 }
                 self.actualContentView.frame = CGRectMake(originX, 0., CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
