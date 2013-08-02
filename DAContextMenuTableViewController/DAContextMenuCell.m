@@ -266,4 +266,13 @@
     return YES;
 }
 
+#pragma mark * UIResponder
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    // If we touched up on the cell and the menu is showing, then we want to close it
+    if(!self.contextMenuHidden) {
+        [self setMenuOptionsViewHidden:YES animated:YES completionHandler:nil];
+    }
+    [super touchesEnded:touches withEvent:event];
+}
+
 @end
