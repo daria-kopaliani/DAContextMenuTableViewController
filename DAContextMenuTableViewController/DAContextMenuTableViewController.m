@@ -16,6 +16,7 @@
 @property (strong, nonatomic) DAContextMenuCell *cellDisplayingMenuOptions;
 @property (strong, nonatomic) DAOverlayView *overlayView;
 @property (assign, nonatomic) BOOL customEditing;
+@property (assign, nonatomic) BOOL customEditingAnimationInProgress;
 @property (strong, nonatomic) UIBarButtonItem *editBarButtonItem;
 @property (strong, nonatomic) UIBarButtonItem *doneBarButtonItem;
 
@@ -27,7 +28,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.customEditing = NO;
+    self.customEditing = self.customEditingAnimationInProgress = NO;
 }
 
 #pragma mark - Private
@@ -70,17 +71,6 @@
 
 #pragma mark * DAContextMenuCell delegate
 
-- (void)contextMenuDidHideInCell:(DAContextMenuCell *)cell
-{
-    self.customEditing = NO;
-}
-
-- (void)contextMenuDidShowInCell:(DAContextMenuCell *)cell
-{
-    self.cellDisplayingMenuOptions = cell;
-    self.customEditing = YES;
-}
-
 - (void)contextMenuCellDidSelectMoreOption:(DAContextMenuCell *)cell
 {
     NSAssert(NO, @"Should be implemented in subclasses");
@@ -91,9 +81,32 @@
     self.customEditing = NO;
 }
 
+- (void)contextMenuDidHideInCell:(DAContextMenuCell *)cell
+{
+    self.customEditing = NO;
+    self.customEditingAnimationInProgress = NO;
+}
+
+- (void)contextMenuDidShowInCell:(DAContextMenuCell *)cell
+{
+    self.cellDisplayingMenuOptions = cell;
+    self.customEditing = YES;
+    self.customEditingAnimationInProgress = NO;
+}
+
+- (void)contextMenuWillHideInCell:(DAContextMenuCell *)cell
+{
+    self.customEditingAnimationInProgress = YES;
+}
+
+- (void)contextMenuWillShowInCell:(DAContextMenuCell *)cell
+{
+    self.customEditingAnimationInProgress = YES;
+}
+
 - (BOOL)shouldShowMenuOptionsViewInCell:(DAContextMenuCell *)cell
 {
-    return !self.customEditing;
+    return self.customEditing && !self.customEditingAnimationInProgress;
 }
 
 #pragma mark * DAOverlayView delegate

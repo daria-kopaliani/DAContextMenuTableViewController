@@ -171,9 +171,14 @@
         
         CGPoint currentTouchPoint = [panRecognizer locationInView:self.contentView];
         CGFloat currentTouchPositionX = currentTouchPoint.x;
-        
+        CGPoint velocity = [recognizer velocityInView:self.contentView];
         if (recognizer.state == UIGestureRecognizerStateBegan) {
             self.initialTouchPositionX = currentTouchPositionX;
+            if (velocity.x > 0) {
+                [self.delegate contextMenuWillHideInCell:self];
+            } else {
+                [self.delegate contextMenuDidShowInCell:self];
+            }
         } else if (recognizer.state == UIGestureRecognizerStateChanged) {
             CGPoint velocity = [recognizer velocityInView:self.contentView];
             if (!self.contextMenuHidden || (velocity.x > 0. || [self.delegate shouldShowMenuOptionsViewInCell:self])) {
@@ -252,10 +257,13 @@
 
 #pragma mark * UIPanGestureRecognizer delegate
 
-- (BOOL)gestureRecognizerShouldBegin:(UIPanGestureRecognizer *)panGestureRecognizer
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
-    CGPoint translation = [panGestureRecognizer translationInView:self];
-    return fabs(translation.x) > fabs(translation.y);
+    if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
+        CGPoint translation = [(UIPanGestureRecognizer *)gestureRecognizer translationInView:self];
+        return fabs(translation.x) > fabs(translation.y);
+    }
+    return YES;
 }
 
 @end
