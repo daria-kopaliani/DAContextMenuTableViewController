@@ -55,7 +55,7 @@
             self.overlayView.frame = self.view.bounds;
             [self.view addSubview:_overlayView];
             for (UIView *view in self.tableView.subviews) {
-                if (view != self.cellDisplayingMenuOptions && view != self.overlayView) {
+                if (view != self.cellDisplayingMenuOptions && [view isKindOfClass:[DAContextMenuCell class]]) {
                     view.userInteractionEnabled = NO;
                 }
             }
@@ -63,7 +63,9 @@
             self.cellDisplayingMenuOptions = nil;
             [self.overlayView removeFromSuperview];
             for (UIView *view in self.tableView.subviews) {
-                view.userInteractionEnabled = YES;
+                if (view != self.cellDisplayingMenuOptions && [view isKindOfClass:[DAContextMenuCell class]]) {
+                    view.userInteractionEnabled = YES;
+                }
             }
         }
     }
@@ -78,6 +80,7 @@
 
 - (void)contextMenuCellDidSelectDeleteOption:(DAContextMenuCell *)cell
 {
+    [cell.superview sendSubviewToBack:cell];
     self.customEditing = NO;
 }
 
