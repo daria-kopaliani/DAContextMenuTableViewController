@@ -55,7 +55,7 @@
             self.overlayView.frame = self.view.bounds;
             [self.view addSubview:_overlayView];
             for (UIView *view in self.tableView.subviews) {
-                if (view != self.cellDisplayingMenuOptions && [view isKindOfClass:[DAContextMenuCell class]]) {
+                if ((view.gestureRecognizers.count == 0) && view != self.cellDisplayingMenuOptions && view != self.overlayView) {
                     view.userInteractionEnabled = NO;
                 }
             }
@@ -63,7 +63,7 @@
             self.cellDisplayingMenuOptions = nil;
             [self.overlayView removeFromSuperview];
             for (UIView *view in self.tableView.subviews) {
-                if (view != self.cellDisplayingMenuOptions && [view isKindOfClass:[DAContextMenuCell class]]) {
+                if ((view.gestureRecognizers.count == 0) && view != self.cellDisplayingMenuOptions && view != self.overlayView) {
                     view.userInteractionEnabled = YES;
                 }
             }
