@@ -54,9 +54,11 @@
             }
             self.overlayView.frame = self.view.bounds;
             [self.view addSubview:_overlayView];
-            for (UIView *view in self.tableView.subviews) {
-                if ((view.gestureRecognizers.count == 0) && view != self.cellDisplayingMenuOptions && view != self.overlayView) {
-                    view.userInteractionEnabled = NO;
+            if (self.shouldDisableUserInteractionWhileEditing) {
+                for (UIView *view in self.tableView.subviews) {
+                    if ((view.gestureRecognizers.count == 0) && view != self.cellDisplayingMenuOptions && view != self.overlayView) {
+                        view.userInteractionEnabled = NO;
+                    }
                 }
             }
         } else {

@@ -11,4 +11,6 @@
 
 @interface DAContextMenuTableViewController : UITableViewController <DAContextMenuCellDelegate>
 
+@property (assign, nonatomic) BOOL shouldDisableUserInteractionWhileEditing;
+
 @end
