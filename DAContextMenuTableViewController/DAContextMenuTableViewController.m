@@ -133,7 +133,6 @@
 - (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([tableView cellForRowAtIndexPath:indexPath] == self.cellDisplayingMenuOptions) {
-        [self hideMenuOptionsAnimated:YES];
         return NO;
     }
     return YES;
