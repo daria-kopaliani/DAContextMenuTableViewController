@@ -8,9 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "DAContextMenuCell.h"
+#import "DAOverlayView.h"
 
-@interface DAContextMenuTableViewController : UITableViewController <DAContextMenuCellDelegate>
 
+@interface DAContextMenuTableViewController : UITableViewController <DAContextMenuCellDelegate, DAOverlayViewDelegate>
+
+@property (readonly, strong, nonatomic) DAContextMenuCell *cellDisplayingMenuOptions;
 @property (assign, nonatomic) BOOL shouldDisableUserInteractionWhileEditing;
+
+- (void)hideMenuOptionsAnimated:(BOOL)animated;
 
 @end

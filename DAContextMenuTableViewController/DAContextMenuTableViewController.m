@@ -1,15 +1,4 @@
-//
-//  DAContextMenuTableViewController.m
-//  DAContextMenuTableViewControllerDemo
-//
-//  Created by Daria Kopaliani on 7/24/13.
-//  Copyright (c) 2013 Daria Kopaliani. All rights reserved.
-//
-
 #import "DAContextMenuTableViewController.h"
-
-#import "DAOverlayView.h"
-
 
 @interface DAContextMenuTableViewController () <DAOverlayViewDelegate>
 
@@ -31,7 +20,7 @@
     self.customEditing = self.customEditingAnimationInProgress = NO;
 }
 
-#pragma mark - Private
+#pragma mark - Public
 
 - (void)hideMenuOptionsAnimated:(BOOL)animated
 {
@@ -41,6 +30,8 @@
     }];
 }
 
+#pragma mark - Private
+
 - (void)setCustomEditing:(BOOL)customEditing
 {
     if (_customEditing != customEditing) {
@@ -49,6 +40,7 @@
         if (customEditing) {
             if (!_overlayView) {
                 _overlayView = [[DAOverlayView alloc] initWithFrame:self.view.bounds];
+                _overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
                 _overlayView.backgroundColor = [UIColor clearColor];
                 _overlayView.delegate = self;
             }
@@ -77,7 +69,7 @@
 
 - (void)contextMenuCellDidSelectMoreOption:(DAContextMenuCell *)cell
 {
-    NSAssert(NO, @"Should be implemented in subclasses");
+    NSAssert(NO, @"%s should be implemented in subclasses", __PRETTY_FUNCTION__);
 }
 
 - (void)contextMenuCellDidSelectDeleteOption:(DAContextMenuCell *)cell
@@ -118,10 +110,8 @@
 
 - (UIView *)overlayView:(DAOverlayView *)view didHitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
-    BOOL shouldIterceptTouches = YES;
-    CGPoint location = [self.view convertPoint:point fromView:view];
-    CGRect rect = [self.view convertRect:self.cellDisplayingMenuOptions.frame toView:self.view];
-    shouldIterceptTouches = CGRectContainsPoint(rect, location);
+    BOOL shouldIterceptTouches = CGRectContainsPoint([self.view convertRect:self.cellDisplayingMenuOptions.frame toView:self.view],
+                                                     [self.view convertPoint:point fromView:view]);
     if (!shouldIterceptTouches) {
         [self hideMenuOptionsAnimated:YES];
     }
