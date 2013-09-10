@@ -16,6 +16,7 @@
 @property (assign, nonatomic, getter = isContextMenuHidden) BOOL contextMenuHidden;
 @property (assign, nonatomic) BOOL shouldDisplayContextMenuView;
 @property (assign, nonatomic) CGFloat initialTouchPositionX;
+@property (strong, nonatomic) UIPanGestureRecognizer *panRecognizer;
 
 @end
 
@@ -52,9 +53,9 @@
     self.menuOptionButtonTitlePadding = 25.;
     self.menuOptionsAnimationDuration = 0.3;
     self.bounceValue = 30.;
-    UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
-    panRecognizer.delegate = self;
-    [self addGestureRecognizer:panRecognizer];
+    self.panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
+    self.panRecognizer.delegate = self;
+    [self addGestureRecognizer:self.panRecognizer];
     [self setNeedsLayout];
 }
 

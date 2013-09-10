@@ -36,6 +36,7 @@
 @property (assign, nonatomic) CGFloat menuOptionsAnimationDuration;
 @property (assign, nonatomic) CGFloat bounceValue;
 @property (strong, nonatomic) NSString *moreOptionsButtonTitle;
+@property (readonly, strong, nonatomic) UIPanGestureRecognizer *panRecognizer;
 
 @property (weak, nonatomic) id<DAContextMenuCellDelegate> delegate;
 
