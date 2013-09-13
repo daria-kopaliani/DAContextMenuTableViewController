@@ -75,8 +75,8 @@
     [self.contentView sendSubviewToBack:self.contextMenuView];
     [self.contentView bringSubviewToFront:self.actualContentView];
     
-    CGFloat height = CGRectGetHeight(self.bounds);
-    CGFloat width = CGRectGetWidth(self.bounds);
+    CGFloat height = floorf(CGRectGetHeight(self.actualContentView.bounds));
+    CGFloat width = floorf(CGRectGetWidth(self.actualContentView.bounds));
     CGFloat menuOptionButtonWidth = [self menuOptionButtonWidth];
     self.moreOptionsButton.frame = CGRectMake(width - menuOptionButtonWidth - CGRectGetWidth(self.deleteButton.frame), 0., menuOptionButtonWidth, height);
     self.deleteButton.frame = CGRectMake(width - menuOptionButtonWidth, 0., menuOptionButtonWidth, height);
@@ -86,7 +86,7 @@
 {
     NSString *string = ([self.deleteButtonTitle length] > [self.moreOptionsButtonTitle length]) ? self.deleteButtonTitle : self.moreOptionsButtonTitle;
     CGFloat stringWidth = 0;
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.) {
+    if ([string respondsToSelector:@selector(sizeWithAttributes:)]) {
         stringWidth = [string sizeWithAttributes:@{NSFontAttributeName : self.moreOptionsButton.titleLabel.font}].width;
     } else {
         stringWidth = [string sizeWithFont:self.moreOptionsButton.titleLabel.font].width;
@@ -134,6 +134,9 @@
 {
     if (self.selected) {
         [self setSelected:NO animated:NO];
+    }
+    if (!hidden) {
+        self.contextMenuView.hidden = hidden;
     }
     CGRect frame = CGRectMake((hidden) ? 0 : -[self contextMenuWidth], 0, CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
     [UIView animateWithDuration:(animated) ? self.menuOptionsAnimationDuration : 0.
