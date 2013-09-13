@@ -21,6 +21,7 @@
 @end
 
 
+#define IS_IOS7_AND_UP ([[UIDevice currentDevice].systemVersion floatValue] >= 7.0)
 @implementation DAContextMenuCell
 
 #pragma mark - Initialization
@@ -49,12 +50,13 @@
     self.shouldDisplayContextMenuView = NO;
     self.editable = YES;
     self.moreOptionsButtonTitle = @"More";
-    self.deleteButtonTitle = @"Delete";
+    self.deleteButtonTitle = @"Celete";
     self.menuOptionButtonTitlePadding = 25.;
     self.menuOptionsAnimationDuration = 0.3;
     self.bounceValue = 30.;
     self.panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
     self.panRecognizer.delegate = self;
+    self.contextMenuEnabled = YES;
     [self addGestureRecognizer:self.panRecognizer];
     [self setNeedsLayout];
 }
@@ -83,7 +85,13 @@
 - (CGFloat)menuOptionButtonWidth
 {
     NSString *string = ([self.deleteButtonTitle length] > [self.moreOptionsButtonTitle length]) ? self.deleteButtonTitle : self.moreOptionsButtonTitle;
-    CGFloat width = roundf([string sizeWithFont:self.moreOptionsButton.titleLabel.font].width + 2. * self.menuOptionButtonTitlePadding);
+    CGFloat stringWidth = 0;
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.) {
+        stringWidth = [string sizeWithAttributes:@{NSFontAttributeName : self.moreOptionsButton.titleLabel.font}].width;
+    } else {
+        stringWidth = [string sizeWithFont:self.moreOptionsButton.titleLabel.font].width;
+    }
+    CGFloat width = roundf(stringWidth) + 2. * self.menuOptionButtonTitlePadding;
     width = MIN(width, CGRectGetWidth(self.bounds) / 2. - 10.);
     if ((NSInteger)width % 2) {
         width += 1.;
@@ -165,14 +173,14 @@
 
 - (void)setContextMenuEnabled:(BOOL)contextMenuEnabled
 {
-    if (_contextMenuEnabled != contextMenuEnabled) {
-        _contextMenuEnabled = contextMenuEnabled;
-        self.panRecognizer.enabled = contextMenuEnabled;
-        if (contextMenuEnabled) {
-            [self.contentView insertSubview:self.contextMenuView belowSubview:self.actualContentView];
-        } else {
-            [self.contextMenuView removeFromSuperview];
-        }
+    _contextMenuEnabled = contextMenuEnabled;
+    self.panRecognizer.enabled = contextMenuEnabled;
+    if (contextMenuEnabled) {
+        self.actualContentView.backgroundColor = self.backgroundColor;
+        [self.contentView insertSubview:self.contextMenuView belowSubview:self.actualContentView];
+    } else {
+        self.actualContentView.backgroundColor = [UIColor clearColor];
+        [self.contextMenuView removeFromSuperview];
     }
 }
 
@@ -180,44 +188,47 @@
 
 - (void)handlePan:(UIPanGestureRecognizer *)recognizer;
 {
-    if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
-        UIPanGestureRecognizer *panRecognizer = (UIPanGestureRecognizer *)recognizer;
-        
-        CGPoint currentTouchPoint = [panRecognizer locationInView:self.contentView];
-        CGFloat currentTouchPositionX = currentTouchPoint.x;
-        CGPoint velocity = [recognizer velocityInView:self.contentView];
-        if (recognizer.state == UIGestureRecognizerStateBegan) {
-            self.initialTouchPositionX = currentTouchPositionX;
-            if (velocity.x > 0) {
-                [self.delegate contextMenuWillHideInCell:self];
-            } else {
-                [self.delegate contextMenuDidShowInCell:self];
-            }
-        } else if (recognizer.state == UIGestureRecognizerStateChanged) {
+    if (self.contextMenuEnabled) {
+        if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
+            [self layoutSubviews];
+            UIPanGestureRecognizer *panRecognizer = (UIPanGestureRecognizer *)recognizer;
+            
+            CGPoint currentTouchPoint = [panRecognizer locationInView:self.contentView];
+            CGFloat currentTouchPositionX = currentTouchPoint.x;
             CGPoint velocity = [recognizer velocityInView:self.contentView];
-            if (!self.contextMenuHidden || (velocity.x > 0. || [self.delegate shouldShowMenuOptionsViewInCell:self])) {
-                if (self.selected) {
-                    [self setSelected:NO animated:NO];
-                }
-                self.contextMenuView.hidden = NO;
-                CGFloat panAmount = currentTouchPositionX - self.initialTouchPositionX;
+            if (recognizer.state == UIGestureRecognizerStateBegan) {
                 self.initialTouchPositionX = currentTouchPositionX;
-                CGFloat minOriginX = -[self contextMenuWidth] - self.bounceValue;
-                CGFloat maxOriginX = 0.;
-                CGFloat originX = CGRectGetMinX(self.actualContentView.frame) + panAmount;
-                originX = MIN(maxOriginX, originX);
-                originX = MAX(minOriginX, originX);
-                
-                
-                if ((originX < -0.5 * [self contextMenuWidth] && velocity.x < 0.) || velocity.x < -100) {
-                    self.shouldDisplayContextMenuView = YES;
-                } else if ((originX > -0.3 * [self contextMenuWidth] && velocity.x > 0.) || velocity.x > 100) {
-                    self.shouldDisplayContextMenuView = NO;
+                if (velocity.x > 0) {
+                    [self.delegate contextMenuWillHideInCell:self];
+                } else {
+                    [self.delegate contextMenuDidShowInCell:self];
                 }
-                self.actualContentView.frame = CGRectMake(originX, 0., CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
+            } else if (recognizer.state == UIGestureRecognizerStateChanged) {
+                CGPoint velocity = [recognizer velocityInView:self.contentView];
+                if (!self.contextMenuHidden || (velocity.x > 0. || [self.delegate shouldShowMenuOptionsViewInCell:self])) {
+                    if (self.selected) {
+                        [self setSelected:NO animated:NO];
+                    }
+                    self.contextMenuView.hidden = NO;
+                    CGFloat panAmount = currentTouchPositionX - self.initialTouchPositionX;
+                    self.initialTouchPositionX = currentTouchPositionX;
+                    CGFloat minOriginX = -[self contextMenuWidth] - self.bounceValue;
+                    CGFloat maxOriginX = 0.;
+                    CGFloat originX = CGRectGetMinX(self.actualContentView.frame) + panAmount;
+                    originX = MIN(maxOriginX, originX);
+                    originX = MAX(minOriginX, originX);
+                    
+                    
+                    if ((originX < -0.5 * [self contextMenuWidth] && velocity.x < 0.) || velocity.x < -100) {
+                        self.shouldDisplayContextMenuView = YES;
+                    } else if ((originX > -0.3 * [self contextMenuWidth] && velocity.x > 0.) || velocity.x > 100) {
+                        self.shouldDisplayContextMenuView = NO;
+                    }
+                    self.actualContentView.frame = CGRectMake(originX, 0., CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
+                }
+            } else if (recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled) {
+                [self setMenuOptionsViewHidden:!self.shouldDisplayContextMenuView animated:YES completionHandler:nil];
             }
-        } else if (recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled) {
-            [self setMenuOptionsViewHidden:!self.shouldDisplayContextMenuView animated:YES completionHandler:nil];
         }
     }
 }
@@ -260,7 +271,7 @@
         if (!_deleteButton) {
             CGRect frame = CGRectMake(0., 0., 100., CGRectGetHeight(self.actualContentView.frame));
             _deleteButton = [[UIButton alloc] initWithFrame:frame];
-            _deleteButton.backgroundColor = [UIColor colorWithRed:251./255. green:34./255. blue:38./255. alpha:1.];
+            _deleteButton.backgroundColor = [UIColor colorWithRed:255./255. green:59./255. blue:48./255. alpha:1.];
             [self.contextMenuView addSubview:_deleteButton];
             [_deleteButton addTarget:self action:@selector(deleteButtonTapped) forControlEvents:UIControlEventTouchUpInside];
         }
@@ -273,11 +284,15 @@
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
-    if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
-        CGPoint translation = [(UIPanGestureRecognizer *)gestureRecognizer translationInView:self];
-        return fabs(translation.x) > fabs(translation.y);
+    if (self.contextMenuEnabled) {
+        if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
+            CGPoint translation = [(UIPanGestureRecognizer *)gestureRecognizer translationInView:self];
+            return fabs(translation.x) > fabs(translation.y);
+        }
+        return YES;
+    } else {
+        return NO;
     }
-    return YES;
 }
 
 @end
