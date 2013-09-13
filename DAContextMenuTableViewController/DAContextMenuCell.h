@@ -32,6 +32,7 @@
 @property (readonly, assign, nonatomic, getter = isContextMenuHidden) BOOL contextMenuHidden;
 @property (strong, nonatomic) NSString *deleteButtonTitle;
 @property (assign, nonatomic) BOOL editable;
+@property (assign, nonatomic) BOOL contextMenuEnabled;
 @property (assign, nonatomic) CGFloat menuOptionButtonTitlePadding;
 @property (assign, nonatomic) CGFloat menuOptionsAnimationDuration;
 @property (assign, nonatomic) CGFloat bounceValue;

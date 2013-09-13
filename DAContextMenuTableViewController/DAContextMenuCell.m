@@ -163,6 +163,19 @@
     }
 }
 
+- (void)setContextMenuEnabled:(BOOL)contextMenuEnabled
+{
+    if (_contextMenuEnabled != contextMenuEnabled) {
+        _contextMenuEnabled = contextMenuEnabled;
+        self.panRecognizer.enabled = contextMenuEnabled;
+        if (contextMenuEnabled) {
+            [self.contentView insertSubview:self.contextMenuView belowSubview:self.actualContentView];
+        } else {
+            [self.contextMenuView removeFromSuperview];
+        }
+    }
+}
+
 #pragma mark - Private
 
 - (void)handlePan:(UIPanGestureRecognizer *)recognizer;
