@@ -30,18 +30,15 @@
 @property (strong, nonatomic) IBOutlet UIView *actualContentView;
 
 @property (readonly, assign, nonatomic, getter = isContextMenuHidden) BOOL contextMenuHidden;
-@property (strong, nonatomic) NSString *deleteButtonTitle;
-@property (assign, nonatomic) BOOL editable;
+@property (strong, nonatomic) UIButton *actionButton;
+@property (strong, nonatomic) UIButton *moreActionsButton;
 @property (assign, nonatomic) BOOL contextMenuEnabled;
-@property (assign, nonatomic) CGFloat menuOptionButtonTitlePadding;
 @property (assign, nonatomic) CGFloat menuOptionsAnimationDuration;
 @property (assign, nonatomic) CGFloat bounceValue;
-@property (strong, nonatomic) NSString *moreOptionsButtonTitle;
 @property (readonly, strong, nonatomic) UIPanGestureRecognizer *panRecognizer;
 
 @property (weak, nonatomic) id<DAContextMenuCellDelegate> delegate;
 
-- (CGFloat)contextMenuWidth;
 - (void)setMenuOptionsViewHidden:(BOOL)hidden animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler;
 
 @end

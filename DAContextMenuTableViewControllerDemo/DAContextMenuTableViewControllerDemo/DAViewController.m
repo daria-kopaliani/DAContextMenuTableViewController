@@ -56,6 +56,15 @@
 {
     static NSString *CellIdentifier = @"Cell";
     DAContextMenuCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0., 0., 80., 95.)];
+    button.titleLabel.numberOfLines = 2;
+    [button setTitle:@"Add to\nPlaylist" forState:UIControlStateNormal];
+    [button setBackgroundColor:[UIColor blueColor]];
+    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    cell.actionButton = button;
+    
+    
     cell.delegate = self;
     return cell;
 }

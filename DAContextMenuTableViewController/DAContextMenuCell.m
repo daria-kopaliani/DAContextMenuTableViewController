@@ -11,8 +11,6 @@
 @interface DAContextMenuCell () <UIGestureRecognizerDelegate>
 
 @property (strong, nonatomic) UIView *contextMenuView;
-@property (strong, nonatomic) UIButton *moreOptionsButton;
-@property (strong, nonatomic) UIButton *deleteButton;
 @property (assign, nonatomic, getter = isContextMenuHidden) BOOL contextMenuHidden;
 @property (assign, nonatomic) BOOL shouldDisplayContextMenuView;
 @property (assign, nonatomic) CGFloat initialTouchPositionX;
@@ -21,7 +19,6 @@
 @end
 
 
-#define IS_IOS7_AND_UP ([[UIDevice currentDevice].systemVersion floatValue] >= 7.0)
 @implementation DAContextMenuCell
 
 #pragma mark - Initialization
@@ -46,12 +43,11 @@
     self.contextMenuView = [[UIView alloc] initWithFrame:self.actualContentView.bounds];
     self.contextMenuView.backgroundColor = self.contentView.backgroundColor;
     [self.contentView insertSubview:self.contextMenuView belowSubview:self.actualContentView];
+    
+    [self setUpDefaultButtons];
+    
     self.contextMenuHidden = self.contextMenuView.hidden = YES;
     self.shouldDisplayContextMenuView = NO;
-    self.editable = YES;
-    self.moreOptionsButtonTitle = @"More";
-    self.deleteButtonTitle = @"Celete";
-    self.menuOptionButtonTitlePadding = 25.;
     self.menuOptionsAnimationDuration = 0.3;
     self.bounceValue = 30.;
     self.panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
@@ -61,11 +57,26 @@
     [self setNeedsLayout];
 }
 
+- (void)setUpDefaultButtons
+{
+    self.actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0., 0., 80., CGRectGetHeight(self.actualContentView.bounds))];
+    [self.actionButton setTitle:@"Delete" forState:UIControlStateNormal];
+    [self.actionButton setBackgroundColor:[UIColor colorWithRed:255./255. green:59./255. blue:48./255. alpha:1.]];
+    [self.actionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.contextMenuView addSubview:self.actionButton];
+
+    self.moreActionsButton = [[UIButton alloc] initWithFrame:CGRectMake(0., 0., 80., CGRectGetHeight(self.actualContentView.bounds))];
+    [self.moreActionsButton setTitle:@"More" forState:UIControlStateNormal];
+    [self.moreActionsButton setBackgroundColor:[UIColor lightGrayColor]];
+    [self.moreActionsButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.contextMenuView addSubview:self.moreActionsButton];
+}
+
 #pragma mark - Public
 
 - (CGFloat)contextMenuWidth
 {
-    return CGRectGetWidth(self.deleteButton.frame) + CGRectGetWidth(self.moreOptionsButton.frame);
+    return CGRectGetWidth(self.actionButton.frame) + CGRectGetWidth(self.moreActionsButton.frame);
 }
 
 - (void)layoutSubviews
@@ -77,41 +88,17 @@
     
     CGFloat height = floorf(CGRectGetHeight(self.actualContentView.bounds));
     CGFloat width = floorf(CGRectGetWidth(self.actualContentView.bounds));
-    CGFloat menuOptionButtonWidth = [self menuOptionButtonWidth];
-    self.moreOptionsButton.frame = CGRectMake(width - menuOptionButtonWidth - CGRectGetWidth(self.deleteButton.frame), 0., menuOptionButtonWidth, height);
-    self.deleteButton.frame = CGRectMake(width - menuOptionButtonWidth, 0., menuOptionButtonWidth, height);
+    self.moreActionsButton.frame = CGRectMake(width - CGRectGetWidth(self.actionButton.frame) - CGRectGetWidth(self.moreActionsButton.frame), 0., CGRectGetWidth(self.moreActionsButton.frame), height);
+    self.actionButton.frame = CGRectMake(width - CGRectGetWidth(self.actionButton.frame), 0., CGRectGetWidth(self.actionButton.frame), height);
 }
 
-- (CGFloat)menuOptionButtonWidth
-{
-    NSString *string = ([self.deleteButtonTitle length] > [self.moreOptionsButtonTitle length]) ? self.deleteButtonTitle : self.moreOptionsButtonTitle;
-    CGFloat stringWidth = 0;
-    if ([string respondsToSelector:@selector(sizeWithAttributes:)]) {
-        stringWidth = [string sizeWithAttributes:@{NSFontAttributeName : self.moreOptionsButton.titleLabel.font}].width;
-    } else {
-        stringWidth = [string sizeWithFont:self.moreOptionsButton.titleLabel.font].width;
-    }
-    CGFloat width = roundf(stringWidth) + 2. * self.menuOptionButtonTitlePadding;
-    width = MIN(width, CGRectGetWidth(self.bounds) / 2. - 10.);
-    if ((NSInteger)width % 2) {
-        width += 1.;
-    }
-    return width;
-}
+#pragma mark * Overwitten setters
 
-- (void)setDeleteButtonTitle:(NSString *)deleteButtonTitle
+- (void)setActionButton:(UIButton *)actionButton
 {
-    _deleteButtonTitle = deleteButtonTitle;
-    [self.deleteButton setTitle:deleteButtonTitle forState:UIControlStateNormal];
+    _actionButton = actionButton;
+    [self.contextMenuView addSubview:actionButton];
     [self setNeedsLayout];
-}
-
-- (void)setEditable:(BOOL)editable
-{
-    if (_editable != editable) {
-        _editable = editable;
-        [self setNeedsLayout];
-    }
 }
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
@@ -122,12 +109,11 @@
     }
 }
 
-- (void)setMenuOptionButtonTitlePadding:(CGFloat)menuOptionButtonTitlePadding
+- (void)setMoreActionsButton:(UIButton *)moreActionsButton
 {
-    if (_menuOptionButtonTitlePadding != menuOptionButtonTitlePadding) {
-        _menuOptionButtonTitlePadding = menuOptionButtonTitlePadding;
-        [self setNeedsLayout];
-    }
+    _moreActionsButton = moreActionsButton;
+    [self.contextMenuView addSubview:moreActionsButton];
+    [self setNeedsLayout];
 }
 
 - (void)setMenuOptionsViewHidden:(BOOL)hidden animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler
@@ -159,13 +145,6 @@
      }];
 }
 
-- (void)setMoreOptionsButtonTitle:(NSString *)moreOptionsButtonTitle
-{
-    _moreOptionsButtonTitle = moreOptionsButtonTitle;
-    [self.moreOptionsButton setTitle:self.moreOptionsButtonTitle forState:UIControlStateNormal];
-    [self setNeedsLayout];
-}
-
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
     if (self.contextMenuHidden) {
@@ -194,6 +173,7 @@
     if (self.contextMenuEnabled) {
         if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
             [self layoutSubviews];
+            self.actualContentView.backgroundColor = self.backgroundColor;
             UIPanGestureRecognizer *panRecognizer = (UIPanGestureRecognizer *)recognizer;
             
             CGPoint currentTouchPoint = [panRecognizer locationInView:self.contentView];
@@ -252,35 +232,6 @@
 {
     [super prepareForReuse];
     [self setMenuOptionsViewHidden:YES animated:NO completionHandler:nil];
-}
-
-#pragma mark * Lazy getters
-
-- (UIButton *)moreOptionsButton
-{
-    if (!_moreOptionsButton) {
-        CGRect frame = CGRectMake(0., 0., 100., CGRectGetHeight(self.actualContentView.frame));
-        _moreOptionsButton = [[UIButton alloc] initWithFrame:frame];
-        _moreOptionsButton.backgroundColor = [UIColor lightGrayColor];
-        [self.contextMenuView addSubview:_moreOptionsButton];
-        [_moreOptionsButton addTarget:self action:@selector(moreButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    }
-    return _moreOptionsButton;
-}
-
-- (UIButton *)deleteButton
-{
-    if (self.editable) {
-        if (!_deleteButton) {
-            CGRect frame = CGRectMake(0., 0., 100., CGRectGetHeight(self.actualContentView.frame));
-            _deleteButton = [[UIButton alloc] initWithFrame:frame];
-            _deleteButton.backgroundColor = [UIColor colorWithRed:255./255. green:59./255. blue:48./255. alpha:1.];
-            [self.contextMenuView addSubview:_deleteButton];
-            [_deleteButton addTarget:self action:@selector(deleteButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-        }
-        return _deleteButton;
-    }
-    return nil;
 }
 
 #pragma mark * UIPanGestureRecognizer delegate
