@@ -13,14 +13,13 @@
 
 @protocol DAContextMenuCellDelegate <NSObject>
 
-- (void)contextMenuCellDidSelectMoreOption:(DAContextMenuCell *)cell;
+- (void)actionButtonTappedInContextMenuCell:(DAContextMenuCell *)cell;
+- (void)moreActionsButtonTappedInContextMenuCell:(DAContextMenuCell *)cell;
 - (void)contextMenuDidHideInCell:(DAContextMenuCell *)cell;
 - (void)contextMenuDidShowInCell:(DAContextMenuCell *)cell;
 - (void)contextMenuWillHideInCell:(DAContextMenuCell *)cell;
 - (void)contextMenuWillShowInCell:(DAContextMenuCell *)cell;
 - (BOOL)shouldShowMenuOptionsViewInCell:(DAContextMenuCell *)cell;
-@optional
-- (void)contextMenuCellDidSelectDeleteOption:(DAContextMenuCell *)cell;
 
 @end
 

@@ -76,15 +76,14 @@
 
 #pragma mark * DAContextMenuCell delegate
 
-- (void)contextMenuCellDidSelectDeleteOption:(DAContextMenuCell *)cell
+- (void)actionButtonTappedInContextMenuCell:(DAContextMenuCell *)cell
 {
-    [super contextMenuCellDidSelectDeleteOption:cell];
     self.rowsCount -= 1;
     [self.tableView deleteRowsAtIndexPaths:@[[self.tableView indexPathForCell:cell]] withRowAnimation:UITableViewRowAnimationAutomatic];
     
 }
 
-- (void)contextMenuCellDidSelectMoreOption:(DAContextMenuCell *)cell
+- (void)moreActionsButtonTappedInContextMenuCell:(DAContextMenuCell *)cell
 {
     UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil
                                                              delegate:nil

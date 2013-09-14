@@ -43,7 +43,7 @@
     self.contextMenuView = [[UIView alloc] initWithFrame:self.actualContentView.bounds];
     self.contextMenuView.backgroundColor = self.contentView.backgroundColor;
     [self.contentView insertSubview:self.contextMenuView belowSubview:self.actualContentView];
-    
+    self.actualContentView.backgroundColor = self.backgroundColor;
     [self setUpDefaultButtons];
     
     self.contextMenuHidden = self.contextMenuView.hidden = YES;
@@ -97,6 +97,7 @@
 - (void)setActionButton:(UIButton *)actionButton
 {
     _actionButton = actionButton;
+    [actionButton addTarget:self action:@selector(actionButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.contextMenuView addSubview:actionButton];
     [self setNeedsLayout];
 }
@@ -112,6 +113,7 @@
 - (void)setMoreActionsButton:(UIButton *)moreActionsButton
 {
     _moreActionsButton = moreActionsButton;
+    [moreActionsButton addTarget:self action:@selector(moreActionsButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.contextMenuView addSubview:moreActionsButton];
     [self setNeedsLayout];
 }
@@ -173,7 +175,6 @@
     if (self.contextMenuEnabled) {
         if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
             [self layoutSubviews];
-            self.actualContentView.backgroundColor = self.backgroundColor;
             UIPanGestureRecognizer *panRecognizer = (UIPanGestureRecognizer *)recognizer;
             
             CGPoint currentTouchPoint = [panRecognizer locationInView:self.contentView];
@@ -216,16 +217,14 @@
     }
 }
 
-- (void)deleteButtonTapped
+- (void)actionButtonTapped
 {
-    if ([self.delegate respondsToSelector:@selector(contextMenuCellDidSelectDeleteOption:)]) {
-        [self.delegate contextMenuCellDidSelectDeleteOption:self];
-    }
+    [self.delegate actionButtonTappedInContextMenuCell:self];
 }
 
-- (void)moreButtonTapped
+- (void)moreActionsButtonTapped
 {
-    [self.delegate contextMenuCellDidSelectMoreOption:self];
+    [self.delegate moreActionsButtonTappedInContextMenuCell:self];
 }
 
 - (void)prepareForReuse

@@ -67,7 +67,12 @@
 
 #pragma mark * DAContextMenuCell delegate
 
-- (void)contextMenuCellDidSelectMoreOption:(DAContextMenuCell *)cell
+- (void)actionButtonTappedInContextMenuCell:(DAContextMenuCell *)cell
+{
+    NSAssert(NO, @"%s should be implemented in subclasses", __PRETTY_FUNCTION__);
+}
+
+- (void)moreActionsButtonTappedInContextMenuCell:(DAContextMenuCell *)cell
 {
     NSAssert(NO, @"%s should be implemented in subclasses", __PRETTY_FUNCTION__);
 }
