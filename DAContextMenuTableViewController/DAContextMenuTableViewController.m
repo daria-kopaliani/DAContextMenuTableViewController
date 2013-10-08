@@ -106,7 +106,7 @@
     self.customEditingAnimationInProgress = YES;
 }
 
-- (BOOL)shouldShowMenuOptionsViewInCell:(DAContextMenuCell *)cell
+- (BOOL)shouldDisplayContextMenuViewInCell:(DAContextMenuCell *)cell
 {
     return self.customEditing && !self.customEditingAnimationInProgress;
 }

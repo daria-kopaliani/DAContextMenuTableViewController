@@ -26,7 +26,6 @@
     
     self.title = @"DAContextMenuTableViewController";
     self.rowsCount = 20;
-//    self.tableView.allowsSelection = NO;
 }
 
 #pragma mark - Private
@@ -56,16 +55,11 @@
 {
     static NSString *CellIdentifier = @"Cell";
     DAContextMenuCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    cell.contextMenuBackgroundColor = [UIColor blackColor];
     
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0., 0., 80., 80.)];
-    button.titleLabel.numberOfLines = 2;
-    [button setTitle:@"Add to\nPlaylist" forState:UIControlStateNormal];
-    [button setBackgroundColor:[UIColor blueColor]];
-    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     cell.dataSource = self;
-    
-    
     cell.delegate = self;
+    
     return cell;
 }
 
@@ -111,23 +105,27 @@
         default: return DAContextMenuCellButtonVerticalAlignmentModeCenter;
     }
 }
+
 #pragma mark * DAContextMenuCell delegate
 
-- (void)actionButtonTappedInContextMenuCell:(DAContextMenuCell *)cell
+- (void)contextMenuCell:(DAContextMenuCell *)cell buttonTappedAtIndex:(NSUInteger)index
 {
-    self.rowsCount -= 1;
-    [self.tableView deleteRowsAtIndexPaths:@[[self.tableView indexPathForCell:cell]] withRowAnimation:UITableViewRowAnimationAutomatic];
-    
-}
-
-- (void)moreActionsButtonTappedInContextMenuCell:(DAContextMenuCell *)cell
-{
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil
-                                                             delegate:nil
-                                                    cancelButtonTitle:@"Cancel"
-                                               destructiveButtonTitle:nil
-                                                    otherButtonTitles:@"Reply", @"Forward", @"Flag", @"Mark as Unread", @"Move to Junk", @"Move Message...",  nil];
-    [actionSheet showInView:self.view];
+    switch (index) {
+        case 0: {
+            UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+                                                                     delegate:nil
+                                                            cancelButtonTitle:@"Cancel"
+                                                       destructiveButtonTitle:nil
+                                                            otherButtonTitles:@"Reply", @"Forward", @"Flag", @"Mark as Unread", @"Move to Junk", @"Move Message...",  nil];
+            [actionSheet showInView:self.view];
+        } break;
+        case 1: {
+            self.rowsCount -= 1;
+            [self.tableView deleteRowsAtIndexPaths:@[[self.tableView indexPathForCell:cell]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        } break;
+        default: break;
+            
+    }
 }
 
 @end

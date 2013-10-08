@@ -16,6 +16,7 @@ typedef enum {
 
 @class DAContextMenuCell;
 
+
 @protocol DAContextMenuCellDataSource <NSObject>
 
 - (NSUInteger)numberOfButtonsInContextMenuCell:(DAContextMenuCell *)cell;
@@ -27,13 +28,12 @@ typedef enum {
 
 @protocol DAContextMenuCellDelegate <NSObject>
 
-- (void)actionButtonTappedInContextMenuCell:(DAContextMenuCell *)cell;
-- (void)moreActionsButtonTappedInContextMenuCell:(DAContextMenuCell *)cell;
+- (void)contextMenuCell:(DAContextMenuCell *)cell buttonTappedAtIndex:(NSUInteger)index;
 - (void)contextMenuDidHideInCell:(DAContextMenuCell *)cell;
 - (void)contextMenuDidShowInCell:(DAContextMenuCell *)cell;
 - (void)contextMenuWillHideInCell:(DAContextMenuCell *)cell;
 - (void)contextMenuWillShowInCell:(DAContextMenuCell *)cell;
-- (BOOL)shouldShowMenuOptionsViewInCell:(DAContextMenuCell *)cell;
+- (BOOL)shouldDisplayContextMenuViewInCell:(DAContextMenuCell *)cell;
 
 @end
 
@@ -41,8 +41,8 @@ typedef enum {
 @interface DAContextMenuCell : UITableViewCell
 
 @property (strong, nonatomic) IBOutlet UIView *actualContentView;
-
-@property (readonly, assign, nonatomic, getter = isContextMenuHidden) BOOL contextMenuHidden;
+@property (strong, nonatomic) UIColor *contextMenuBackgroundColor;
+@property (readonly, assign, nonatomic) BOOL contextMenuHidden;
 @property (assign, nonatomic) BOOL contextMenuEnabled;
 @property (assign, nonatomic) CGFloat menuOptionsAnimationDuration;
 @property (assign, nonatomic) CGFloat bounceValue;

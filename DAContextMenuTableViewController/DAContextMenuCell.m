@@ -11,6 +11,7 @@
 @interface DAContextMenuCell () <UIGestureRecognizerDelegate>
 
 @property (strong, nonatomic) UIView *contextMenuView;
+@property (strong, nonatomic) NSMutableArray *contextMenuButtons;
 @property (assign, nonatomic, getter = isContextMenuHidden) BOOL contextMenuHidden;
 @property (assign, nonatomic) BOOL shouldDisplayContextMenuView;
 @property (assign, nonatomic) CGFloat initialTouchPositionX;
@@ -40,8 +41,8 @@
 
 - (void)setUp
 {
+    self.contextMenuButtons = [NSMutableArray array];
     self.contextMenuView = [[UIView alloc] initWithFrame:self.actualContentView.bounds];
-    self.contextMenuView.backgroundColor = self.contentView.backgroundColor;
     [self.contentView insertSubview:self.contextMenuView belowSubview:self.actualContentView];
     self.actualContentView.backgroundColor = self.backgroundColor;
     
@@ -53,7 +54,6 @@
     self.panRecognizer.delegate = self;
     self.contextMenuEnabled = YES;
     [self addGestureRecognizer:self.panRecognizer];
-    [self setNeedsLayout];
 }
 
 #pragma mark - Public
@@ -75,37 +75,16 @@
 {
     [super layoutSubviews];
     
-    if (self.dataSource) {
-        self.contextMenuView.frame = self.actualContentView.bounds;
-        [self.contentView sendSubviewToBack:self.contextMenuView];
-        [self.contentView bringSubviewToFront:self.actualContentView];
-        
-        NSUInteger buttonsCount = [self.dataSource numberOfButtonsInContextMenuCell:self];
-        CGFloat trailingSpace = 0.;
-        CGFloat cellWidth = CGRectGetWidth(self.contentView.frame);
-        CGFloat cellHeight = CGRectGetHeight(self.contentView.frame);
-        for (NSInteger i = buttonsCount - 1; i >= 0; i--) {
-            UIButton *button = [self.dataSource contextMenuCell:self buttonAtIndex:i];
-            CGFloat buttonWidth = CGRectGetWidth(button.frame);
-            CGFloat buttonHeight = CGRectGetHeight(button.frame);
-            NSAssert(button, @"Context menu cell could not get button at index %d", i);
-            CGFloat y;
-            switch ([self.dataSource contextMenuCell:self alignmentForButtonAtIndex:i]) {
-                case DAContextMenuCellButtonVerticalAlignmentModeTop: {
-                    y = 0;
-                } break;
-                case DAContextMenuCellButtonVerticalAlignmentModeCenter: {
-                    y = roundf(cellHeight - buttonHeight) / 2.;
-                }
-                case DAContextMenuCellButtonVerticalAlignmentModeBottom: {
-                    y = cellHeight - buttonHeight;
-                }
-            }
-            button.frame = CGRectMake(cellWidth - buttonWidth - trailingSpace, y, buttonWidth, buttonHeight);
-            trailingSpace += buttonWidth;
-            [self.contextMenuView addSubview:button];
-        }
+    if (!self.contextMenuHidden) {
+        [self layoutContextMenuView];
     }
+}
+
+#pragma mark * Overwitten getters
+
+- (UIColor *)contextMenuBackgroundColor
+{
+    return self.contentView.backgroundColor;
 }
 
 #pragma mark * Overwitten setters
@@ -155,6 +134,11 @@
     }
 }
 
+- (void)setContextMenuBackgroundColor:(UIColor *)contextMenuBackgroundColor
+{
+    self.contentView.backgroundColor = contextMenuBackgroundColor;
+}
+
 - (void)setContextMenuEnabled:(BOOL)contextMenuEnabled
 {
     _contextMenuEnabled = contextMenuEnabled;
@@ -170,17 +154,24 @@
 
 #pragma mark - Private
 
+- (void)contextMenuButtonDidClick:(UIButton *)sender
+{
+    NSUInteger index = [self.contextMenuButtons indexOfObject:sender];
+    if (index != NSNotFound) {
+        [self.delegate contextMenuCell:self buttonTappedAtIndex:index];
+    }
+}
+
 - (void)handlePan:(UIPanGestureRecognizer *)recognizer;
 {
     if (self.contextMenuEnabled) {
         if ([recognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
-            [self layoutSubviews];
             UIPanGestureRecognizer *panRecognizer = (UIPanGestureRecognizer *)recognizer;
-            
             CGPoint currentTouchPoint = [panRecognizer locationInView:self.contentView];
             CGFloat currentTouchPositionX = currentTouchPoint.x;
             CGPoint velocity = [recognizer velocityInView:self.contentView];
             if (recognizer.state == UIGestureRecognizerStateBegan) {
+                [self layoutContextMenuView];
                 self.initialTouchPositionX = currentTouchPositionX;
                 if (velocity.x > 0) {
                     [self.delegate contextMenuWillHideInCell:self];
@@ -189,7 +180,7 @@
                 }
             } else if (recognizer.state == UIGestureRecognizerStateChanged) {
                 CGPoint velocity = [recognizer velocityInView:self.contentView];
-                if (!self.contextMenuHidden || (velocity.x > 0. || [self.delegate shouldShowMenuOptionsViewInCell:self])) {
+                if (!self.contextMenuHidden || (velocity.x > 0. || [self.delegate shouldDisplayContextMenuViewInCell:self])) {
                     if (self.selected) {
                         [self setSelected:NO animated:NO];
                     }
@@ -217,20 +208,50 @@
     }
 }
 
-- (void)actionButtonTapped
-{
-    [self.delegate actionButtonTappedInContextMenuCell:self];
-}
-
-- (void)moreActionsButtonTapped
-{
-    [self.delegate moreActionsButtonTappedInContextMenuCell:self];
-}
-
 - (void)prepareForReuse
 {
     [super prepareForReuse];
+    
     [self setMenuOptionsViewHidden:YES animated:NO completionHandler:nil];
+}
+
+- (void)layoutContextMenuView
+{
+    NSLog(@"layoutContextMenuView");
+    if (self.dataSource) {
+        self.contextMenuView.frame = self.actualContentView.bounds;
+        [self.contentView sendSubviewToBack:self.contextMenuView];
+        [self.contentView bringSubviewToFront:self.actualContentView];
+        
+        NSUInteger buttonsCount = [self.dataSource numberOfButtonsInContextMenuCell:self];
+        CGFloat trailingSpace = 0.;
+        CGFloat cellWidth = CGRectGetWidth(self.contentView.frame);
+        CGFloat cellHeight = CGRectGetHeight(self.contentView.frame);
+        [self.contextMenuButtons removeAllObjects];
+        for (NSInteger i = buttonsCount - 1; i >= 0; i--) {
+            UIButton *button = [self.dataSource contextMenuCell:self buttonAtIndex:i];
+            [button addTarget:self action:@selector(contextMenuButtonDidClick:) forControlEvents:UIControlEventTouchUpInside];
+            CGFloat buttonWidth = CGRectGetWidth(button.frame);
+            CGFloat buttonHeight = CGRectGetHeight(button.frame);
+            NSAssert(button, @"Context menu cell could not get button at index %d", i);
+            CGFloat y;
+            switch ([self.dataSource contextMenuCell:self alignmentForButtonAtIndex:i]) {
+                case DAContextMenuCellButtonVerticalAlignmentModeTop: {
+                    y = 0;
+                } break;
+                case DAContextMenuCellButtonVerticalAlignmentModeCenter: {
+                    y = roundf(cellHeight - buttonHeight) / 2.;
+                }
+                case DAContextMenuCellButtonVerticalAlignmentModeBottom: {
+                    y = cellHeight - buttonHeight;
+                }
+            }
+            button.frame = CGRectMake(cellWidth - buttonWidth - trailingSpace, y, buttonWidth, buttonHeight);
+            trailingSpace += buttonWidth;
+            [self.contextMenuView addSubview:button];
+            [self.contextMenuButtons insertObject:button atIndex:0];
+        }
+    }
 }
 
 #pragma mark * UIPanGestureRecognizer delegate
