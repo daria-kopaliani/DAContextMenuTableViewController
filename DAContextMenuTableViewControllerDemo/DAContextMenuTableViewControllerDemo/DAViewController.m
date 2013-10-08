@@ -11,7 +11,7 @@
 #import "DAContextMenuCell.h"
 
 
-@interface DAViewController ()
+@interface DAViewController () <DAContextMenuCellDataSource, DAContextMenuCellDelegate>
 
 @property (assign, nonatomic) NSInteger rowsCount;
 
@@ -57,12 +57,12 @@
     static NSString *CellIdentifier = @"Cell";
     DAContextMenuCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0., 0., 80., 95.)];
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0., 0., 80., 80.)];
     button.titleLabel.numberOfLines = 2;
     [button setTitle:@"Add to\nPlaylist" forState:UIControlStateNormal];
     [button setBackgroundColor:[UIColor blueColor]];
     [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    cell.actionButton = button;
+    cell.dataSource = self;
     
     
     cell.delegate = self;
@@ -74,6 +74,43 @@
     return 95.;
 }
 
+#pragma mark * DAContextMenuCell data source
+
+- (NSUInteger)numberOfButtonsInContextMenuCell:(DAContextMenuCell *)cell
+{
+    return 2;
+}
+
+- (UIButton *)contextMenuCell:(DAContextMenuCell *)cell buttonAtIndex:(NSUInteger)index
+{
+    UIButton *button = nil;
+    switch (index) {
+        case 0: {
+            button = [[UIButton alloc] initWithFrame:CGRectMake(0., 0., 100., 40.)];
+            [button setBackgroundColor:[UIColor redColor]];
+        } break;
+        case 1: {
+            button = [[UIButton alloc] initWithFrame:CGRectMake(0., 0., 100., 80.)];
+            [button setBackgroundColor:[UIColor greenColor]];
+        } break;
+            
+        default:break;
+    }
+    return button;
+}
+
+- (DAContextMenuCellButtonVerticalAlignmentMode)contextMenuCell:(DAContextMenuCell *)cell alignmentForButtonAtIndex:(NSUInteger)index
+{
+    switch (index) {
+        case 0: {
+            return DAContextMenuCellButtonVerticalAlignmentModeBottom;
+        } break;
+        case 1: {
+            return DAContextMenuCellButtonVerticalAlignmentModeBottom;
+        } break;
+        default: return DAContextMenuCellButtonVerticalAlignmentModeCenter;
+    }
+}
 #pragma mark * DAContextMenuCell delegate
 
 - (void)actionButtonTappedInContextMenuCell:(DAContextMenuCell *)cell

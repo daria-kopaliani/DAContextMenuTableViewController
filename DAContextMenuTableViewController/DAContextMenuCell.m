@@ -44,7 +44,6 @@
     self.contextMenuView.backgroundColor = self.contentView.backgroundColor;
     [self.contentView insertSubview:self.contextMenuView belowSubview:self.actualContentView];
     self.actualContentView.backgroundColor = self.backgroundColor;
-    [self setUpDefaultButtons];
     
     self.contextMenuHidden = self.contextMenuView.hidden = YES;
     self.shouldDisplayContextMenuView = NO;
@@ -57,50 +56,59 @@
     [self setNeedsLayout];
 }
 
-- (void)setUpDefaultButtons
-{
-    self.actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0., 0., 80., CGRectGetHeight(self.actualContentView.bounds))];
-    [self.actionButton setTitle:@"Delete" forState:UIControlStateNormal];
-    [self.actionButton setBackgroundColor:[UIColor colorWithRed:255./255. green:59./255. blue:48./255. alpha:1.]];
-    [self.actionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [self.contextMenuView addSubview:self.actionButton];
-
-    self.moreActionsButton = [[UIButton alloc] initWithFrame:CGRectMake(0., 0., 80., CGRectGetHeight(self.actualContentView.bounds))];
-    [self.moreActionsButton setTitle:@"More" forState:UIControlStateNormal];
-    [self.moreActionsButton setBackgroundColor:[UIColor lightGrayColor]];
-    [self.moreActionsButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [self.contextMenuView addSubview:self.moreActionsButton];
-}
-
 #pragma mark - Public
 
 - (CGFloat)contextMenuWidth
 {
-    return CGRectGetWidth(self.actionButton.frame) + CGRectGetWidth(self.moreActionsButton.frame);
+    CGFloat width = 0.;
+    if (self.dataSource) {
+        for (NSUInteger i = 0; i < [self.dataSource numberOfButtonsInContextMenuCell:self]; i++) {
+            UIButton *button = [self.dataSource contextMenuCell:self buttonAtIndex:i];
+            width += CGRectGetWidth(button.frame);
+        }
+    }
+
+    return width;
 }
 
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    self.contextMenuView.frame = self.actualContentView.bounds;
-    [self.contentView sendSubviewToBack:self.contextMenuView];
-    [self.contentView bringSubviewToFront:self.actualContentView];
     
-    CGFloat height = floorf(CGRectGetHeight(self.actualContentView.bounds));
-    CGFloat width = floorf(CGRectGetWidth(self.actualContentView.bounds));
-    self.moreActionsButton.frame = CGRectMake(width - CGRectGetWidth(self.actionButton.frame) - CGRectGetWidth(self.moreActionsButton.frame), 0., CGRectGetWidth(self.moreActionsButton.frame), height);
-    self.actionButton.frame = CGRectMake(width - CGRectGetWidth(self.actionButton.frame), 0., CGRectGetWidth(self.actionButton.frame), height);
+    if (self.dataSource) {
+        self.contextMenuView.frame = self.actualContentView.bounds;
+        [self.contentView sendSubviewToBack:self.contextMenuView];
+        [self.contentView bringSubviewToFront:self.actualContentView];
+        
+        NSUInteger buttonsCount = [self.dataSource numberOfButtonsInContextMenuCell:self];
+        CGFloat trailingSpace = 0.;
+        CGFloat cellWidth = CGRectGetWidth(self.contentView.frame);
+        CGFloat cellHeight = CGRectGetHeight(self.contentView.frame);
+        for (NSInteger i = buttonsCount - 1; i >= 0; i--) {
+            UIButton *button = [self.dataSource contextMenuCell:self buttonAtIndex:i];
+            CGFloat buttonWidth = CGRectGetWidth(button.frame);
+            CGFloat buttonHeight = CGRectGetHeight(button.frame);
+            NSAssert(button, @"Context menu cell could not get button at index %d", i);
+            CGFloat y;
+            switch ([self.dataSource contextMenuCell:self alignmentForButtonAtIndex:i]) {
+                case DAContextMenuCellButtonVerticalAlignmentModeTop: {
+                    y = 0;
+                } break;
+                case DAContextMenuCellButtonVerticalAlignmentModeCenter: {
+                    y = roundf(cellHeight - buttonHeight) / 2.;
+                }
+                case DAContextMenuCellButtonVerticalAlignmentModeBottom: {
+                    y = cellHeight - buttonHeight;
+                }
+            }
+            button.frame = CGRectMake(cellWidth - buttonWidth - trailingSpace, y, buttonWidth, buttonHeight);
+            trailingSpace += buttonWidth;
+            [self.contextMenuView addSubview:button];
+        }
+    }
 }
 
 #pragma mark * Overwitten setters
-
-- (void)setActionButton:(UIButton *)actionButton
-{
-    _actionButton = actionButton;
-    [actionButton addTarget:self action:@selector(actionButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.contextMenuView addSubview:actionButton];
-    [self setNeedsLayout];
-}
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
 {
@@ -108,14 +116,6 @@
         self.contextMenuView.hidden = YES;
         [super setHighlighted:highlighted animated:animated];
     }
-}
-
-- (void)setMoreActionsButton:(UIButton *)moreActionsButton
-{
-    _moreActionsButton = moreActionsButton;
-    [moreActionsButton addTarget:self action:@selector(moreActionsButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.contextMenuView addSubview:moreActionsButton];
-    [self setNeedsLayout];
 }
 
 - (void)setMenuOptionsViewHidden:(BOOL)hidden animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler

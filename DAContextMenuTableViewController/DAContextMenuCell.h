@@ -8,8 +8,22 @@
 
 #import <UIKit/UIKit.h>
 
+typedef enum {
+    DAContextMenuCellButtonVerticalAlignmentModeCenter = 0,
+    DAContextMenuCellButtonVerticalAlignmentModeTop,
+    DAContextMenuCellButtonVerticalAlignmentModeBottom
+} DAContextMenuCellButtonVerticalAlignmentMode;
 
 @class DAContextMenuCell;
+
+@protocol DAContextMenuCellDataSource <NSObject>
+
+- (NSUInteger)numberOfButtonsInContextMenuCell:(DAContextMenuCell *)cell;
+- (UIButton *)contextMenuCell:(DAContextMenuCell *)cell buttonAtIndex:(NSUInteger)index;
+- (DAContextMenuCellButtonVerticalAlignmentMode)contextMenuCell:(DAContextMenuCell *)cell alignmentForButtonAtIndex:(NSUInteger)index;
+
+@end
+
 
 @protocol DAContextMenuCellDelegate <NSObject>
 
@@ -29,13 +43,12 @@
 @property (strong, nonatomic) IBOutlet UIView *actualContentView;
 
 @property (readonly, assign, nonatomic, getter = isContextMenuHidden) BOOL contextMenuHidden;
-@property (strong, nonatomic) UIButton *actionButton;
-@property (strong, nonatomic) UIButton *moreActionsButton;
 @property (assign, nonatomic) BOOL contextMenuEnabled;
 @property (assign, nonatomic) CGFloat menuOptionsAnimationDuration;
 @property (assign, nonatomic) CGFloat bounceValue;
 @property (readonly, strong, nonatomic) UIPanGestureRecognizer *panRecognizer;
 
+@property (weak, nonatomic) id<DAContextMenuCellDataSource> dataSource;
 @property (weak, nonatomic) id<DAContextMenuCellDelegate> delegate;
 
 - (void)setMenuOptionsViewHidden:(BOOL)hidden animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler;
