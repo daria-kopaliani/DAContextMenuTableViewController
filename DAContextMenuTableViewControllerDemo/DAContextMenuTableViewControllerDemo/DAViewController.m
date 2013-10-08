@@ -9,6 +9,7 @@
 #import "DAViewController.h"
 
 #import "DAContextMenuCell.h"
+#import "DADemoCell.h"
 
 
 @interface DAViewController () <DAContextMenuCellDataSource, DAContextMenuCellDelegate>
@@ -55,8 +56,6 @@
 {
     static NSString *CellIdentifier = @"Cell";
     DAContextMenuCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-    cell.contextMenuBackgroundColor = [UIColor blackColor];
-    
     cell.dataSource = self;
     cell.delegate = self;
     
@@ -77,33 +76,17 @@
 
 - (UIButton *)contextMenuCell:(DAContextMenuCell *)cell buttonAtIndex:(NSUInteger)index
 {
-    UIButton *button = nil;
+    DADemoCell *demoCell = [cell isKindOfClass:[DADemoCell class]] ? (DADemoCell *)cell : nil;
     switch (index) {
-        case 0: {
-            button = [[UIButton alloc] initWithFrame:CGRectMake(0., 0., 100., 40.)];
-            [button setBackgroundColor:[UIColor redColor]];
-        } break;
-        case 1: {
-            button = [[UIButton alloc] initWithFrame:CGRectMake(0., 0., 100., 80.)];
-            [button setBackgroundColor:[UIColor greenColor]];
-        } break;
-            
-        default:break;
+        case 0: return demoCell.moreButton;
+        case 1: return demoCell.archiveButton;
+        default: return nil;
     }
-    return button;
 }
 
 - (DAContextMenuCellButtonVerticalAlignmentMode)contextMenuCell:(DAContextMenuCell *)cell alignmentForButtonAtIndex:(NSUInteger)index
 {
-    switch (index) {
-        case 0: {
-            return DAContextMenuCellButtonVerticalAlignmentModeBottom;
-        } break;
-        case 1: {
-            return DAContextMenuCellButtonVerticalAlignmentModeBottom;
-        } break;
-        default: return DAContextMenuCellButtonVerticalAlignmentModeCenter;
-    }
+    return DAContextMenuCellButtonVerticalAlignmentModeCenter;
 }
 
 #pragma mark * DAContextMenuCell delegate
@@ -120,8 +103,10 @@
             [actionSheet showInView:self.view];
         } break;
         case 1: {
-            self.rowsCount -= 1;
-            [self.tableView deleteRowsAtIndexPaths:@[[self.tableView indexPathForCell:cell]] withRowAnimation:UITableViewRowAnimationAutomatic];
+            if ([self.tableView indexPathForCell:cell]) {
+                self.rowsCount -= 1;
+                [self.tableView deleteRowsAtIndexPaths:@[[self.tableView indexPathForCell:cell]] withRowAnimation:UITableViewRowAnimationFade];
+            }
         } break;
         default: break;
             

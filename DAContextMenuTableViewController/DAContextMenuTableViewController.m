@@ -67,20 +67,9 @@
 
 #pragma mark * DAContextMenuCell delegate
 
-- (void)actionButtonTappedInContextMenuCell:(DAContextMenuCell *)cell
+- (void)contextMenuCell:(DAContextMenuCell *)cell buttonTappedAtIndex:(NSUInteger)index
 {
     NSAssert(NO, @"%s should be implemented in subclasses", __PRETTY_FUNCTION__);
-}
-
-- (void)moreActionsButtonTappedInContextMenuCell:(DAContextMenuCell *)cell
-{
-    NSAssert(NO, @"%s should be implemented in subclasses", __PRETTY_FUNCTION__);
-}
-
-- (void)contextMenuCellDidSelectDeleteOption:(DAContextMenuCell *)cell
-{
-    [cell.superview sendSubviewToBack:cell];
-    self.customEditing = NO;
 }
 
 - (void)contextMenuDidHideInCell:(DAContextMenuCell *)cell

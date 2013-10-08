@@ -42,7 +42,7 @@ typedef enum {
 
 @property (strong, nonatomic) IBOutlet UIView *actualContentView;
 @property (strong, nonatomic) UIColor *contextMenuBackgroundColor;
-@property (readonly, assign, nonatomic) BOOL contextMenuHidden;
+@property (readonly, assign, nonatomic, getter = isContextMenuHidden) BOOL contextMenuHidden;
 @property (assign, nonatomic) BOOL contextMenuEnabled;
 @property (assign, nonatomic) CGFloat menuOptionsAnimationDuration;
 @property (assign, nonatomic) CGFloat bounceValue;

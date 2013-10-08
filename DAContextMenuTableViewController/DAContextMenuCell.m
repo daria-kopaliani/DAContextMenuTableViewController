@@ -14,8 +14,10 @@
 @property (strong, nonatomic) NSMutableArray *contextMenuButtons;
 @property (assign, nonatomic, getter = isContextMenuHidden) BOOL contextMenuHidden;
 @property (assign, nonatomic) BOOL shouldDisplayContextMenuView;
+@property (assign, nonatomic) BOOL didPerformContextMenuLayout;
 @property (assign, nonatomic) CGFloat initialTouchPositionX;
 @property (strong, nonatomic) UIPanGestureRecognizer *panRecognizer;
+@property (strong, nonatomic) NSLayoutConstraint *actualContentViewTrailingSpaceConstraint;
 
 @end
 
@@ -36,23 +38,26 @@
 - (void)awakeFromNib
 {
     [super awakeFromNib];
+    
     [self setUp];
 }
 
 - (void)setUp
 {
     self.contextMenuButtons = [NSMutableArray array];
-    self.contextMenuView = [[UIView alloc] initWithFrame:self.actualContentView.bounds];
-    [self.contentView insertSubview:self.contextMenuView belowSubview:self.actualContentView];
-    self.actualContentView.backgroundColor = self.backgroundColor;
     
-    self.contextMenuHidden = self.contextMenuView.hidden = YES;
+    // configuring defaults
+    self.actualContentView.backgroundColor = self.backgroundColor;
+    self.contextMenuHidden = YES;
     self.shouldDisplayContextMenuView = NO;
     self.menuOptionsAnimationDuration = 0.3;
     self.bounceValue = 30.;
+    self.contextMenuEnabled = YES;
+    
+    [self setUpContstraints];
+    
     self.panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
     self.panRecognizer.delegate = self;
-    self.contextMenuEnabled = YES;
     [self addGestureRecognizer:self.panRecognizer];
 }
 
@@ -71,28 +76,34 @@
     return width;
 }
 
-- (void)layoutSubviews
+#pragma mark * Overwitten setters
+
+- (void)setContextMenuBackgroundColor:(UIColor *)contextMenuBackgroundColor
 {
-    [super layoutSubviews];
-    
-    if (!self.contextMenuHidden) {
-        [self layoutContextMenuView];
+    _contextMenuBackgroundColor = contextMenuBackgroundColor;
+    if (_contextMenuView) {
+        self.contextMenuView.backgroundColor = contextMenuBackgroundColor;
     }
 }
 
-#pragma mark * Overwitten getters
-
-- (UIColor *)contextMenuBackgroundColor
+- (void)setContextMenuEnabled:(BOOL)contextMenuEnabled
 {
-    return self.contentView.backgroundColor;
+    _contextMenuEnabled = contextMenuEnabled;
+    self.panRecognizer.enabled = contextMenuEnabled;
+    if (contextMenuEnabled) {
+        self.actualContentView.backgroundColor = self.backgroundColor;
+    } else {
+        self.actualContentView.backgroundColor = [UIColor clearColor];
+        [self.contextMenuButtons removeAllObjects];
+        [self.contextMenuView removeFromSuperview];
+        self.contextMenuView = nil;
+    }
 }
-
-#pragma mark * Overwitten setters
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
 {
     if (self.contextMenuHidden) {
-        self.contextMenuView.hidden = YES;
+        _contextMenuView.hidden = YES;
         [super setHighlighted:highlighted animated:animated];
     }
 }
@@ -105,13 +116,13 @@
     if (!hidden) {
         self.contextMenuView.hidden = hidden;
     }
-    CGRect frame = CGRectMake((hidden) ? 0 : -[self contextMenuWidth], 0, CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
+    self.actualContentViewTrailingSpaceConstraint.constant = (hidden) ? 0 : -[self contextMenuWidth];
     [UIView animateWithDuration:(animated) ? self.menuOptionsAnimationDuration : 0.
                           delay:0.
                         options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut
                      animations:^
      {
-         self.actualContentView.frame = frame;
+         [self.contentView layoutIfNeeded];
      } completion:^(BOOL finished) {
          self.contextMenuHidden = hidden;
          self.shouldDisplayContextMenuView = !hidden;
@@ -129,26 +140,8 @@
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
     if (self.contextMenuHidden) {
-        self.contextMenuView.hidden = YES;
+        _contextMenuView.hidden = YES;
         [super setSelected:selected animated:animated];
-    }
-}
-
-- (void)setContextMenuBackgroundColor:(UIColor *)contextMenuBackgroundColor
-{
-    self.contentView.backgroundColor = contextMenuBackgroundColor;
-}
-
-- (void)setContextMenuEnabled:(BOOL)contextMenuEnabled
-{
-    _contextMenuEnabled = contextMenuEnabled;
-    self.panRecognizer.enabled = contextMenuEnabled;
-    if (contextMenuEnabled) {
-        self.actualContentView.backgroundColor = self.backgroundColor;
-        [self.contentView insertSubview:self.contextMenuView belowSubview:self.actualContentView];
-    } else {
-        self.actualContentView.backgroundColor = [UIColor clearColor];
-        [self.contextMenuView removeFromSuperview];
     }
 }
 
@@ -171,6 +164,7 @@
             CGFloat currentTouchPositionX = currentTouchPoint.x;
             CGPoint velocity = [recognizer velocityInView:self.contentView];
             if (recognizer.state == UIGestureRecognizerStateBegan) {
+                self.contextMenuView.hidden = NO;
                 [self layoutContextMenuView];
                 self.initialTouchPositionX = currentTouchPositionX;
                 if (velocity.x > 0) {
@@ -185,21 +179,20 @@
                         [self setSelected:NO animated:NO];
                     }
                     self.contextMenuView.hidden = NO;
+                    CGFloat contextMenuWidth = [self contextMenuWidth];
                     CGFloat panAmount = currentTouchPositionX - self.initialTouchPositionX;
                     self.initialTouchPositionX = currentTouchPositionX;
-                    CGFloat minOriginX = -[self contextMenuWidth] - self.bounceValue;
-                    CGFloat maxOriginX = 0.;
-                    CGFloat originX = CGRectGetMinX(self.actualContentView.frame) + panAmount;
-                    originX = MIN(maxOriginX, originX);
-                    originX = MAX(minOriginX, originX);
+                    CGFloat indent = self.actualContentViewTrailingSpaceConstraint.constant + panAmount;
+                    indent = MIN(0., indent);
+                    indent = MAX(-contextMenuWidth - self.bounceValue, indent);
                     
-                    
-                    if ((originX < -0.5 * [self contextMenuWidth] && velocity.x < 0.) || velocity.x < -100) {
+                    CGFloat velocityToTriggerAnimation = 100.;
+                    if ((indent < -0.5 * contextMenuWidth && velocity.x < 0.) || velocity.x < -velocityToTriggerAnimation) {
                         self.shouldDisplayContextMenuView = YES;
-                    } else if ((originX > -0.3 * [self contextMenuWidth] && velocity.x > 0.) || velocity.x > 100) {
+                    } else if ((indent > -0.3 * contextMenuWidth && velocity.x > 0.) || velocity.x > velocityToTriggerAnimation) {
                         self.shouldDisplayContextMenuView = NO;
                     }
-                    self.actualContentView.frame = CGRectMake(originX, 0., CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
+                    self.actualContentViewTrailingSpaceConstraint.constant = indent;
                 }
             } else if (recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled) {
                 [self setMenuOptionsViewHidden:!self.shouldDisplayContextMenuView animated:YES completionHandler:nil];
@@ -208,50 +201,98 @@
     }
 }
 
+- (void)layoutContextMenuView
+{
+    if (self.dataSource && self.contextMenuEnabled && !self.didPerformContextMenuLayout) {
+        NSLog(@"layoutContextMenuView");
+        self.didPerformContextMenuLayout = YES;
+        NSUInteger buttonsCount = [self.dataSource numberOfButtonsInContextMenuCell:self];
+        [self.contextMenuButtons removeAllObjects];
+        for (NSInteger i = buttonsCount - 1; i >= 0; i--) {
+            UIButton *button = [self.dataSource contextMenuCell:self buttonAtIndex:i];
+            NSAssert(button, @"Context menu cell could not get button at index %d in %p", i, __PRETTY_FUNCTION__);
+            [self.contextMenuView addSubview:button];
+            button.translatesAutoresizingMaskIntoConstraints = NO;
+            [button addTarget:self action:@selector(contextMenuButtonDidClick:) forControlEvents:UIControlEventTouchUpInside];
+            NSDictionary *views = @{@"button" : button};
+            [button addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"[button(==%lf)]", CGRectGetWidth(button.frame)] options:0 metrics:nil views:views]];
+            [button addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:[button(==%lf)]", CGRectGetHeight(button.frame)] options:0 metrics:nil views:views]];
+            
+            switch ([self.dataSource contextMenuCell:self alignmentForButtonAtIndex:i]) {
+                case DAContextMenuCellButtonVerticalAlignmentModeTop: {
+                    [self.contextMenuView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[button]" options:0 metrics:nil views:views]];
+                } break;
+                case DAContextMenuCellButtonVerticalAlignmentModeCenter: {
+                    [self.contextMenuView addConstraint:[NSLayoutConstraint constraintWithItem:button
+                                                                                     attribute:NSLayoutAttributeCenterY
+                                                                                     relatedBy:NSLayoutRelationEqual
+                                                                                        toItem:self.contextMenuView
+                                                                                     attribute:NSLayoutAttributeCenterY
+                                                                                    multiplier:1. constant:0.]];
+                } break;
+                case DAContextMenuCellButtonVerticalAlignmentModeBottom: {
+                    [self.contextMenuView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[button]|" options:0 metrics:nil views:views]];
+                } break;
+            }
+            if (self.contextMenuButtons.count) {
+                UIButton *anotherButton = [self.contextMenuButtons firstObject];
+                NSAssert(anotherButton, nil);
+                [self.contextMenuView addConstraint:[NSLayoutConstraint constraintWithItem:button
+                                                                                 attribute:NSLayoutAttributeRight
+                                                                                 relatedBy:NSLayoutRelationEqual
+                                                                                    toItem:anotherButton
+                                                                                 attribute:NSLayoutAttributeLeft
+                                                                                multiplier:1. constant:0.]];
+            } else {
+                [self.contextMenuView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[button]|" options:0 metrics:nil views:views]];
+            }
+            [self.contextMenuButtons insertObject:button atIndex:0];
+        }
+    }
+}
+
 - (void)prepareForReuse
 {
     [super prepareForReuse];
     
+    [self.contextMenuView removeFromSuperview];
+    self.contextMenuView = nil;
+    [self.contextMenuButtons removeAllObjects];
+    self.didPerformContextMenuLayout = NO;
     [self setMenuOptionsViewHidden:YES animated:NO completionHandler:nil];
 }
 
-- (void)layoutContextMenuView
+- (void)setUpContstraints
 {
-    NSLog(@"layoutContextMenuView");
-    if (self.dataSource) {
-        self.contextMenuView.frame = self.actualContentView.bounds;
-        [self.contentView sendSubviewToBack:self.contextMenuView];
-        [self.contentView bringSubviewToFront:self.actualContentView];
-        
-        NSUInteger buttonsCount = [self.dataSource numberOfButtonsInContextMenuCell:self];
-        CGFloat trailingSpace = 0.;
-        CGFloat cellWidth = CGRectGetWidth(self.contentView.frame);
-        CGFloat cellHeight = CGRectGetHeight(self.contentView.frame);
-        [self.contextMenuButtons removeAllObjects];
-        for (NSInteger i = buttonsCount - 1; i >= 0; i--) {
-            UIButton *button = [self.dataSource contextMenuCell:self buttonAtIndex:i];
-            [button addTarget:self action:@selector(contextMenuButtonDidClick:) forControlEvents:UIControlEventTouchUpInside];
-            CGFloat buttonWidth = CGRectGetWidth(button.frame);
-            CGFloat buttonHeight = CGRectGetHeight(button.frame);
-            NSAssert(button, @"Context menu cell could not get button at index %d", i);
-            CGFloat y;
-            switch ([self.dataSource contextMenuCell:self alignmentForButtonAtIndex:i]) {
-                case DAContextMenuCellButtonVerticalAlignmentModeTop: {
-                    y = 0;
-                } break;
-                case DAContextMenuCellButtonVerticalAlignmentModeCenter: {
-                    y = roundf(cellHeight - buttonHeight) / 2.;
-                }
-                case DAContextMenuCellButtonVerticalAlignmentModeBottom: {
-                    y = cellHeight - buttonHeight;
-                }
-            }
-            button.frame = CGRectMake(cellWidth - buttonWidth - trailingSpace, y, buttonWidth, buttonHeight);
-            trailingSpace += buttonWidth;
-            [self.contextMenuView addSubview:button];
-            [self.contextMenuButtons insertObject:button atIndex:0];
-        }
+    [self.contentView removeConstraints:self.contentView.constraints];
+    self.actualContentViewTrailingSpaceConstraint = [NSLayoutConstraint constraintWithItem:_actualContentView
+                                                                                 attribute:NSLayoutAttributeRight
+                                                                                 relatedBy:NSLayoutRelationEqual
+                                                                                    toItem:self.contentView
+                                                                                 attribute:NSLayoutAttributeRight
+                                                                                multiplier:1. constant:0.];
+    [self.contentView addConstraint:self.actualContentViewTrailingSpaceConstraint];
+    NSAssert(self.actualContentView && self.contentView, @"ActualContentView & contentView should be initializad by this point %p", __PRETTY_FUNCTION__);
+    NSDictionary *views = @{@"actualContentView" : self.actualContentView, @"superView" : self.contentView};
+    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[actualContentView(==superView)]" options:0 metrics:nil views:views]];
+    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[actualContentView]|" options:0 metrics:nil views:views]];
+    [self.contentView updateConstraints];
+}
+
+#pragma mark * Lazy getters
+
+- (UIView *)contextMenuView
+{
+    if (!_contextMenuView) {
+        _contextMenuView = [[UIView alloc] initWithFrame:self.contentView.bounds];
+        _contextMenuView.backgroundColor = (self.contextMenuBackgroundColor) ? self.contextMenuBackgroundColor : self.backgroundColor;
+        [self.contentView insertSubview:_contextMenuView belowSubview:self.actualContentView];
+        _contextMenuView.translatesAutoresizingMaskIntoConstraints = NO;
+        NSDictionary *views = @{@"contextMenuView" : _contextMenuView};
+        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[contextMenuView]|" options:0 metrics:nil views:views]];
+        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[contextMenuView]|" options:0 metrics:nil views:views]];
     }
+    return _contextMenuView;
 }
 
 #pragma mark * UIPanGestureRecognizer delegate

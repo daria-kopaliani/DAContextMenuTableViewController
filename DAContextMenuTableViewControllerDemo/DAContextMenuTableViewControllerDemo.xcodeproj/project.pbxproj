@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		43251C9F1804635A00AE2275 /* DADemoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 43251C9E1804635A00AE2275 /* DADemoCell.m */; };
 		4343E3B917A05B7900E078E0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4343E3B817A05B7900E078E0 /* Foundation.framework */; };
 		4343E3BB17A05B7900E078E0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4343E3BA17A05B7900E078E0 /* CoreGraphics.framework */; };
 		4343E3BD17A05B7900E078E0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4343E3BC17A05B7900E078E0 /* UIKit.framework */; };
@@ -39,6 +40,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		43251C9D1804635A00AE2275 /* DADemoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DADemoCell.h; sourceTree = "<group>"; };
+		43251C9E1804635A00AE2275 /* DADemoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DADemoCell.m; sourceTree = "<group>"; };
 		43382D1517A27D740081584A /* en.lproj */ = {isa = PBXFileReference; lastKnownFileType = folder; path = en.lproj; sourceTree = "<group>"; };
 		4343E3B517A05B7900E078E0 /* DAContextMenuTableViewControllerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DAContextMenuTableViewControllerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4343E3B817A05B7900E078E0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -129,6 +132,8 @@
 				4343E3CA17A05B7900E078E0 /* Main.storyboard */,
 				4343E3CD17A05B7900E078E0 /* DAViewController.h */,
 				4343E3CE17A05B7900E078E0 /* DAViewController.m */,
+				43251C9D1804635A00AE2275 /* DADemoCell.h */,
+				43251C9E1804635A00AE2275 /* DADemoCell.m */,
 				4343E3D017A05B7900E078E0 /* Images.xcassets */,
 				4343E3BF17A05B7900E078E0 /* Supporting Files */,
 			);
@@ -280,6 +285,7 @@
 				4343E3C917A05B7900E078E0 /* DAAppDelegate.m in Sources */,
 				4343E3F817A179FC00E078E0 /* DAOverlayView.m in Sources */,
 				4343E3F017A05BA700E078E0 /* DAContextMenuTableViewController.m in Sources */,
+				43251C9F1804635A00AE2275 /* DADemoCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
