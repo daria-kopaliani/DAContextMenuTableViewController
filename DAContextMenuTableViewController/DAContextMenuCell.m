@@ -91,9 +91,8 @@
     _contextMenuEnabled = contextMenuEnabled;
     self.panRecognizer.enabled = contextMenuEnabled;
     if (contextMenuEnabled) {
-        self.actualContentView.backgroundColor = self.backgroundColor;
     } else {
-        self.actualContentView.backgroundColor = [UIColor clearColor];
+
         [self.contextMenuButtons removeAllObjects];
         [self.contextMenuView removeFromSuperview];
         self.contextMenuView = nil;
