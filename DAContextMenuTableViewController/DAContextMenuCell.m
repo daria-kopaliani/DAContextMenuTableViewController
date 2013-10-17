@@ -115,6 +115,7 @@
     if (!hidden) {
         [self.delegate contextMenuWillShowInCell:self];
         self.contextMenuView.hidden = hidden;
+        [self layoutContextMenuView];
     } else {
         [self.delegate contextMenuWillHideInCell:self];
     }
@@ -308,7 +309,6 @@
         NSDictionary *views = @{@"contextMenuView" : _contextMenuView};
         [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[contextMenuView]|" options:0 metrics:nil views:views]];
         [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[contextMenuView]|" options:0 metrics:nil views:views]];
-        [self layoutContextMenuView];
     }
     return _contextMenuView;
 }
