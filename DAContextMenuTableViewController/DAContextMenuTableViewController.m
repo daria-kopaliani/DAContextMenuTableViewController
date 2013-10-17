@@ -80,9 +80,7 @@
 
 - (void)contextMenuDidShowInCell:(DAContextMenuCell *)cell
 {
-    self.cellDisplayingMenuOptions = cell;
-    self.customEditing = YES;
-    self.customEditingAnimationInProgress = NO;
+    self.customEditingAnimationInProgress = YES;
 }
 
 - (void)contextMenuWillHideInCell:(DAContextMenuCell *)cell
@@ -92,7 +90,9 @@
 
 - (void)contextMenuWillShowInCell:(DAContextMenuCell *)cell
 {
-    self.customEditingAnimationInProgress = YES;
+    self.cellDisplayingMenuOptions = cell;
+    self.customEditing = YES;
+    self.customEditingAnimationInProgress = NO;
 }
 
 - (BOOL)shouldDisplayContextMenuViewInCell:(DAContextMenuCell *)cell

@@ -72,7 +72,7 @@
             width += CGRectGetWidth(button.frame);
         }
     }
-
+    
     return width;
 }
 
@@ -92,7 +92,7 @@
     self.panRecognizer.enabled = contextMenuEnabled;
     if (contextMenuEnabled) {
     } else {
-
+        
         [self.contextMenuButtons removeAllObjects];
         [self.contextMenuView removeFromSuperview];
         self.contextMenuView = nil;
@@ -113,11 +113,14 @@
         [self setSelected:NO animated:NO];
     }
     if (!hidden) {
+        [self.delegate contextMenuWillShowInCell:self];
         self.contextMenuView.hidden = hidden;
+    } else {
+        [self.delegate contextMenuWillHideInCell:self];
     }
     self.actualContentViewTrailingSpaceConstraint.constant = (hidden) ? 0 : -[self contextMenuWidth];
     [UIView animateWithDuration:(animated) ? self.menuOptionsAnimationDuration : 0.
-                          delay:0.
+                          delay:0
                         options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut
                      animations:^
      {
@@ -169,7 +172,7 @@
                 if (velocity.x > 0) {
                     [self.delegate contextMenuWillHideInCell:self];
                 } else {
-                    [self.delegate contextMenuDidShowInCell:self];
+                    [self.delegate contextMenuWillShowInCell:self];
                 }
             } else if (recognizer.state == UIGestureRecognizerStateChanged) {
                 CGPoint velocity = [recognizer velocityInView:self.contentView];
@@ -214,10 +217,15 @@
             button.translatesAutoresizingMaskIntoConstraints = NO;
             [button addTarget:self action:@selector(contextMenuButtonDidClick:) forControlEvents:UIControlEventTouchUpInside];
             NSDictionary *views = @{@"button" : button};
+            DAContextMenuCellButtonVerticalAlignmentMode alignmentMode = [self verticalAlignmentModeForButtonAtIndex:i];
             [button addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"[button(==%lf)]", CGRectGetWidth(button.frame)] options:0 metrics:nil views:views]];
-            [button addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:[button(==%lf)]", CGRectGetHeight(button.frame)] options:0 metrics:nil views:views]];
-            
-            switch ([self.dataSource contextMenuCell:self alignmentForButtonAtIndex:i]) {
+            if (alignmentMode != DAContextMenuCellButtonVerticalAlignmentScaleToFit) {
+                [button addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:[button(==%lf)]", CGRectGetHeight(button.frame)] options:0 metrics:nil views:views]];
+            }
+            switch (alignmentMode) {
+                case DAContextMenuCellButtonVerticalAlignmentScaleToFit: {
+                    [self.contextMenuView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[button]|" options:0 metrics:nil views:views]];
+                } break;
                 case DAContextMenuCellButtonVerticalAlignmentModeTop: {
                     [self.contextMenuView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[button]" options:0 metrics:nil views:views]];
                 } break;
@@ -247,6 +255,7 @@
             }
             [self.contextMenuButtons insertObject:button atIndex:0];
         }
+        [self layoutIfNeeded];
     }
 }
 
@@ -278,6 +287,15 @@
     [self.contentView updateConstraints];
 }
 
+- (DAContextMenuCellButtonVerticalAlignmentMode)verticalAlignmentModeForButtonAtIndex:(NSUInteger)index
+{
+    DAContextMenuCellButtonVerticalAlignmentMode verticalAlignmentMode = DAContextMenuCellButtonVerticalAlignmentScaleToFit;
+    if ([self.dataSource respondsToSelector:@selector(contextMenuCell:alignmentForButtonAtIndex:)]) {
+        verticalAlignmentMode = [self.dataSource contextMenuCell:self alignmentForButtonAtIndex:index];
+    }
+    return verticalAlignmentMode;
+}
+
 #pragma mark * Lazy getters
 
 - (UIView *)contextMenuView
@@ -290,6 +308,7 @@
         NSDictionary *views = @{@"contextMenuView" : _contextMenuView};
         [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[contextMenuView]|" options:0 metrics:nil views:views]];
         [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[contextMenuView]|" options:0 metrics:nil views:views]];
+        [self layoutContextMenuView];
     }
     return _contextMenuView;
 }
