@@ -15,6 +15,7 @@
 @property (assign, nonatomic, getter = isContextMenuHidden) BOOL contextMenuHidden;
 @property (assign, nonatomic) BOOL shouldDisplayContextMenuView;
 @property (assign, nonatomic) BOOL didPerformContextMenuLayout;
+@property (assign, nonatomic) BOOL animatingContextMenu;
 @property (assign, nonatomic) CGFloat initialTouchPositionX;
 @property (strong, nonatomic) UIPanGestureRecognizer *panRecognizer;
 @property (strong, nonatomic) NSLayoutConstraint *actualContentViewTrailingSpaceConstraint;
@@ -112,36 +113,40 @@
     if (self.selected) {
         [self setSelected:NO animated:NO];
     }
-    if (!hidden) {
-        [self.delegate contextMenuWillShowInCell:self];
-        self.contextMenuView.hidden = hidden;
-        [self layoutContextMenuView];
-    } else {
-        [self.delegate contextMenuWillHideInCell:self];
+    if (!self.animatingContextMenu) {
+        self.animatingContextMenu = YES;
+        if (!hidden) {
+            [self.delegate contextMenuWillShowInCell:self];
+            self.contextMenuView.hidden = hidden;
+            [self layoutContextMenuView];
+        } else {
+            [self.delegate contextMenuWillHideInCell:self];
+        }
+        self.actualContentViewTrailingSpaceConstraint.constant = (hidden) ? 0 : -[self contextMenuWidth];
+        [UIView animateWithDuration:(animated) ? self.menuOptionsAnimationDuration : 0.
+                              delay:0
+                            options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut
+                         animations:^
+         {
+             [self.contentView layoutIfNeeded];
+         } completion:^(BOOL finished) {
+             self.contextMenuHidden = hidden;
+             self.shouldDisplayContextMenuView = !hidden;
+             self.animatingContextMenu = NO;
+             if (!hidden) {
+                 [self.delegate contextMenuDidShowInCell:self];
+             } else {
+                 [self.delegate contextMenuDidHideInCell:self];
+                 [self.contextMenuView removeFromSuperview];
+                 self.contextMenuView = nil;
+                 [self.contextMenuButtons removeAllObjects];
+                 self.didPerformContextMenuLayout = NO;
+             }
+             if (completionHandler) {
+                 completionHandler();
+             }
+         }];
     }
-    self.actualContentViewTrailingSpaceConstraint.constant = (hidden) ? 0 : -[self contextMenuWidth];
-    [UIView animateWithDuration:(animated) ? self.menuOptionsAnimationDuration : 0.
-                          delay:0
-                        options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut
-                     animations:^
-     {
-         [self.contentView layoutIfNeeded];
-     } completion:^(BOOL finished) {
-         self.contextMenuHidden = hidden;
-         self.shouldDisplayContextMenuView = !hidden;
-         if (!hidden) {
-             [self.delegate contextMenuDidShowInCell:self];
-         } else {
-             [self.delegate contextMenuDidHideInCell:self];
-             [self.contextMenuView removeFromSuperview];
-             self.contextMenuView = nil;
-             [self.contextMenuButtons removeAllObjects];
-             self.didPerformContextMenuLayout = NO;
-         }
-         if (completionHandler) {
-             completionHandler();
-         }
-     }];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
