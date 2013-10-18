@@ -22,9 +22,9 @@ typedef enum {
 
 - (NSUInteger)numberOfButtonsInContextMenuCell:(DAContextMenuCell *)cell;
 - (UIButton *)contextMenuCell:(DAContextMenuCell *)cell buttonAtIndex:(NSUInteger)index;
-
-@optional
 - (DAContextMenuCellButtonVerticalAlignmentMode)contextMenuCell:(DAContextMenuCell *)cell alignmentForButtonAtIndex:(NSUInteger)index;
+- (CGFloat)contextMenuCell:(DAContextMenuCell *)cell heightForButtonAtIndex:(NSUInteger)index;
+- (CGFloat)contextMenuCell:(DAContextMenuCell *)cell widthForButtonAtIndex:(NSUInteger)index;
 
 @end
 

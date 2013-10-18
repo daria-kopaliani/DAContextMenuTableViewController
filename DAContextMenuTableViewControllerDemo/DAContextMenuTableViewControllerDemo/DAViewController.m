@@ -89,6 +89,16 @@
     return DAContextMenuCellButtonVerticalAlignmentModeCenter;
 }
 
+- (CGFloat)contextMenuCell:(DAContextMenuCell *)cell heightForButtonAtIndex:(NSUInteger)index
+{
+    return 95.;
+}
+
+- (CGFloat)contextMenuCell:(DAContextMenuCell *)cell widthForButtonAtIndex:(NSUInteger)index
+{
+    return 90.;
+}
+
 #pragma mark * DAContextMenuCell delegate
 
 - (void)contextMenuCell:(DAContextMenuCell *)cell buttonTappedAtIndex:(NSUInteger)index

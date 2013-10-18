@@ -133,6 +133,10 @@
              [self.delegate contextMenuDidShowInCell:self];
          } else {
              [self.delegate contextMenuDidHideInCell:self];
+             [self.contextMenuView removeFromSuperview];
+             self.contextMenuView = nil;
+             [self.contextMenuButtons removeAllObjects];
+             self.didPerformContextMenuLayout = NO;
          }
          if (completionHandler) {
              completionHandler();
@@ -207,7 +211,6 @@
 - (void)layoutContextMenuView
 {
     if (self.dataSource && self.contextMenuEnabled && !self.didPerformContextMenuLayout) {
-        NSLog(@"layoutContextMenuView");
         self.didPerformContextMenuLayout = YES;
         NSUInteger buttonsCount = [self.dataSource numberOfButtonsInContextMenuCell:self];
         [self.contextMenuButtons removeAllObjects];
@@ -219,9 +222,12 @@
             [button addTarget:self action:@selector(contextMenuButtonDidClick:) forControlEvents:UIControlEventTouchUpInside];
             NSDictionary *views = @{@"button" : button};
             DAContextMenuCellButtonVerticalAlignmentMode alignmentMode = [self verticalAlignmentModeForButtonAtIndex:i];
-            [button addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"[button(==%lf)]", CGRectGetWidth(button.frame)] options:0 metrics:nil views:views]];
+            
+            CGFloat width = [self.dataSource contextMenuCell:self widthForButtonAtIndex:i];
+            [button addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"[button(==%lf)]", width] options:0 metrics:nil views:views]];
             if (alignmentMode != DAContextMenuCellButtonVerticalAlignmentScaleToFit) {
-                [button addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:[button(==%lf)]", CGRectGetHeight(button.frame)] options:0 metrics:nil views:views]];
+                CGFloat height = [self.dataSource contextMenuCell:self heightForButtonAtIndex:i];
+                [button addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:[button(==%lf)]", height] options:0 metrics:nil views:views]];
             }
             switch (alignmentMode) {
                 case DAContextMenuCellButtonVerticalAlignmentScaleToFit: {
@@ -258,17 +264,6 @@
         }
         [self layoutIfNeeded];
     }
-}
-
-- (void)prepareForReuse
-{
-    [super prepareForReuse];
-    
-    [self.contextMenuView removeFromSuperview];
-    self.contextMenuView = nil;
-    [self.contextMenuButtons removeAllObjects];
-    self.didPerformContextMenuLayout = NO;
-    [self setMenuOptionsViewHidden:YES animated:NO completionHandler:nil];
 }
 
 - (void)setUpContstraints
