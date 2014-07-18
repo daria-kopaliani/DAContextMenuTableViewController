@@ -30,6 +30,9 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+        _actualContentView = [[UIView alloc] init];
+        [_actualContentView setTranslatesAutoresizingMaskIntoConstraints:FALSE];
+        [[self contentView] addSubview:_actualContentView];
         [self setUp];
     }
     return self;
@@ -264,6 +267,7 @@
 
 - (void)setUpContstraints
 {
+    NSAssert(self.actualContentView && self.contentView, @"ActualContentView & contentView should be initializad by this point %p", __PRETTY_FUNCTION__);
     [self.contentView removeConstraints:self.contentView.constraints];
     self.actualContentViewTrailingSpaceConstraint = [NSLayoutConstraint constraintWithItem:_actualContentView
                                                                                  attribute:NSLayoutAttributeRight
@@ -272,7 +276,6 @@
                                                                                  attribute:NSLayoutAttributeRight
                                                                                 multiplier:1. constant:0.];
     [self.contentView addConstraint:self.actualContentViewTrailingSpaceConstraint];
-    NSAssert(self.actualContentView && self.contentView, @"ActualContentView & contentView should be initializad by this point %p", __PRETTY_FUNCTION__);
     NSDictionary *views = @{@"actualContentView" : self.actualContentView, @"superView" : self.contentView};
     [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[actualContentView(==superView)]" options:0 metrics:nil views:views]];
     [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[actualContentView]|" options:0 metrics:nil views:views]];
