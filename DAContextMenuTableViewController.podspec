@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "DAContextMenuTableViewController"
-  s.version      = "1.0.1"
+  s.version      = "1.0.3"
   s.summary      = "DAContextMenuTableViewController."
   s.homepage     = "https://github.com/daria-kopaliani/DAContextMenuTableViewController.git"
   s.license      = 'MIT'
