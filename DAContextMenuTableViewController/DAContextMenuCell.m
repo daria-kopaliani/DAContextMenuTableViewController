@@ -186,7 +186,7 @@
                 }
             } else if (recognizer.state == UIGestureRecognizerStateChanged) {
                 CGPoint velocity = [recognizer velocityInView:self.contentView];
-                if (!self.contextMenuHidden || (velocity.x > 0. || [self.delegate shouldDisplayContextMenuViewInCell:self])) {
+                if ([self.delegate shouldDisplayContextMenuViewInCell:self] || !self.contextMenuHidden) {
                     if (self.selected) {
                         [self setSelected:NO animated:NO];
                     }
