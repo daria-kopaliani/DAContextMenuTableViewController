@@ -18,7 +18,6 @@
 @property (assign, nonatomic) BOOL animatingContextMenu;
 @property (assign, nonatomic) CGFloat initialTouchPositionX;
 @property (strong, nonatomic) UIPanGestureRecognizer *panRecognizer;
-@property (strong, nonatomic) NSLayoutConstraint *actualContentViewTrailingSpaceConstraint;
 
 @end
 
@@ -58,6 +57,10 @@
     self.panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
     self.panRecognizer.delegate = self;
     [self addGestureRecognizer:self.panRecognizer];
+//    if (!self.actualContentViewTrailingSpaceConstraint) {
+//        self.actualContentViewTrailingSpaceConstraint = [NSLayoutConstraint constraintWithItem:self.actualContentView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeLeading multiplier:1.f constant:0.f];
+//        [self.contentView addConstraint:self.actualContentViewTrailingSpaceConstraint];
+//    }
 }
 
 #pragma mark - Public
@@ -120,7 +123,7 @@
         } else {
             [self.delegate contextMenuWillHideInCell:self];
         }
-        self.actualContentViewTrailingSpaceConstraint.constant = (hidden) ? 0 : -[self contextMenuWidth];
+        self.actualContentViewLeadingConstraint.constant = (hidden) ? 0 : -[self contextMenuWidth];
         [UIView animateWithDuration:(animated) ? self.menuOptionsAnimationDuration : 0.
                               delay:0
                             options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut
@@ -192,7 +195,7 @@
                     CGFloat contextMenuWidth = [self contextMenuWidth];
                     CGFloat panAmount = currentTouchPositionX - self.initialTouchPositionX;
                     self.initialTouchPositionX = currentTouchPositionX;
-                    CGFloat indent = self.actualContentViewTrailingSpaceConstraint.constant + panAmount;
+                    CGFloat indent = self.actualContentViewLeadingConstraint.constant + panAmount;
                     indent = MIN(0., indent);
                     indent = MAX(-contextMenuWidth - self.bounceValue, indent);
                     
@@ -202,7 +205,7 @@
                     } else if ((indent > -0.3 * contextMenuWidth && velocity.x > 0.) || velocity.x > velocityToTriggerAnimation) {
                         self.shouldDisplayContextMenuView = NO;
                     }
-                    self.actualContentViewTrailingSpaceConstraint.constant = indent;
+                    self.actualContentViewLeadingConstraint.constant = indent;
                 }
             } else if (recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled) {
                 [self setMenuOptionsViewHidden:!self.shouldDisplayContextMenuView animated:YES completionHandler:nil];
@@ -315,5 +318,6 @@
         return NO;
     }
 }
+
 
 @end
