@@ -9,7 +9,8 @@
 #import <UIKit/UIKit.h>
 
 typedef enum {
-    DAContextMenuCellButtonVerticalAlignmentModeCenter = 0,
+    DAContextMenuCellButtonVerticalAlignmentScaleToFit = 0,
+    DAContextMenuCellButtonVerticalAlignmentModeCenter,
     DAContextMenuCellButtonVerticalAlignmentModeTop,
     DAContextMenuCellButtonVerticalAlignmentModeBottom
 } DAContextMenuCellButtonVerticalAlignmentMode;
@@ -22,6 +23,8 @@ typedef enum {
 - (NSUInteger)numberOfButtonsInContextMenuCell:(DAContextMenuCell *)cell;
 - (UIButton *)contextMenuCell:(DAContextMenuCell *)cell buttonAtIndex:(NSUInteger)index;
 - (DAContextMenuCellButtonVerticalAlignmentMode)contextMenuCell:(DAContextMenuCell *)cell alignmentForButtonAtIndex:(NSUInteger)index;
+- (CGFloat)contextMenuCell:(DAContextMenuCell *)cell heightForButtonAtIndex:(NSUInteger)index;
+- (CGFloat)contextMenuCell:(DAContextMenuCell *)cell widthForButtonAtIndex:(NSUInteger)index;
 
 @end
 
