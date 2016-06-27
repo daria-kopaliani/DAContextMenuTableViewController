@@ -18,6 +18,7 @@
 @property (assign, nonatomic) BOOL animatingContextMenu;
 @property (assign, nonatomic) CGFloat initialTouchPositionX;
 @property (strong, nonatomic) UIPanGestureRecognizer *panRecognizer;
+@property (strong, nonatomic) NSLayoutConstraint *actualContentViewTrailingSpaceConstraint;
 
 @end
 
@@ -54,13 +55,11 @@
     self.bounceValue = 30.;
     self.contextMenuEnabled = YES;
     
+    [self setUpContstraints];
+    
     self.panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
     self.panRecognizer.delegate = self;
     [self addGestureRecognizer:self.panRecognizer];
-//    if (!self.actualContentViewTrailingSpaceConstraint) {
-//        self.actualContentViewTrailingSpaceConstraint = [NSLayoutConstraint constraintWithItem:self.actualContentView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeLeading multiplier:1.f constant:0.f];
-//        [self.contentView addConstraint:self.actualContentViewTrailingSpaceConstraint];
-//    }
 }
 
 #pragma mark - Public
@@ -123,7 +122,7 @@
         } else {
             [self.delegate contextMenuWillHideInCell:self];
         }
-        self.actualContentViewLeadingConstraint.constant = (hidden) ? 0 : -[self contextMenuWidth];
+        self.actualContentViewTrailingSpaceConstraint.constant = (hidden) ? 0 : -[self contextMenuWidth];
         [UIView animateWithDuration:(animated) ? self.menuOptionsAnimationDuration : 0.
                               delay:0
                             options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut
@@ -195,7 +194,7 @@
                     CGFloat contextMenuWidth = [self contextMenuWidth];
                     CGFloat panAmount = currentTouchPositionX - self.initialTouchPositionX;
                     self.initialTouchPositionX = currentTouchPositionX;
-                    CGFloat indent = self.actualContentViewLeadingConstraint.constant + panAmount;
+                    CGFloat indent = self.actualContentViewTrailingSpaceConstraint.constant + panAmount;
                     indent = MIN(0., indent);
                     indent = MAX(-contextMenuWidth - self.bounceValue, indent);
                     
@@ -205,7 +204,7 @@
                     } else if ((indent > -0.3 * contextMenuWidth && velocity.x > 0.) || velocity.x > velocityToTriggerAnimation) {
                         self.shouldDisplayContextMenuView = NO;
                     }
-                    self.actualContentViewLeadingConstraint.constant = indent;
+                    self.actualContentViewTrailingSpaceConstraint.constant = indent;
                 }
             } else if (recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled) {
                 [self setMenuOptionsViewHidden:!self.shouldDisplayContextMenuView animated:YES completionHandler:nil];
@@ -272,6 +271,23 @@
     }
 }
 
+- (void)setUpContstraints
+{
+    [self.contentView removeConstraints:self.contentView.constraints];
+    self.actualContentViewTrailingSpaceConstraint = [NSLayoutConstraint constraintWithItem:_actualContentView
+                                                                                 attribute:NSLayoutAttributeRight
+                                                                                 relatedBy:NSLayoutRelationEqual
+                                                                                    toItem:self.contentView
+                                                                                 attribute:NSLayoutAttributeRight
+                                                                                multiplier:1. constant:0.];
+    [self.contentView addConstraint:self.actualContentViewTrailingSpaceConstraint];
+    NSAssert(self.actualContentView && self.contentView, @"ActualContentView & contentView should be initializad by this point %p", __PRETTY_FUNCTION__);
+    NSDictionary *views = @{@"actualContentView" : self.actualContentView, @"superView" : self.contentView};
+    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[actualContentView(==superView)]" options:0 metrics:nil views:views]];
+    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[actualContentView]|" options:0 metrics:nil views:views]];
+    [self.contentView updateConstraints];
+}
+
 - (DAContextMenuCellButtonVerticalAlignmentMode)verticalAlignmentModeForButtonAtIndex:(NSUInteger)index
 {
     DAContextMenuCellButtonVerticalAlignmentMode verticalAlignmentMode = DAContextMenuCellButtonVerticalAlignmentScaleToFit;
@@ -292,14 +308,7 @@
         _contextMenuView.translatesAutoresizingMaskIntoConstraints = NO;
         NSDictionary *views = @{@"contextMenuView" : _contextMenuView};
         [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[contextMenuView]|" options:0 metrics:nil views:views]];
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[contextMenuView]" options:0 metrics:nil views:views]];
-        [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.contextMenuView
-                                                                     attribute:NSLayoutAttributeHeight
-                                                                     relatedBy:NSLayoutRelationEqual
-                                                                        toItem:self.actualContentView
-                                                                     attribute:NSLayoutAttributeHeight
-                                                                    multiplier:1. constant:0.]];
-
+        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[contextMenuView]|" options:0 metrics:nil views:views]];
     }
     return _contextMenuView;
 }
@@ -318,6 +327,5 @@
         return NO;
     }
 }
-
 
 @end
