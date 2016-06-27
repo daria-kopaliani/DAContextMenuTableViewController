@@ -50,7 +50,6 @@ typedef enum {
 @property (assign, nonatomic) CGFloat menuOptionsAnimationDuration;
 @property (assign, nonatomic) CGFloat bounceValue;
 @property (readonly, strong, nonatomic) UIPanGestureRecognizer *panRecognizer;
-@property (nonatomic, strong) IBOutlet NSLayoutConstraint *actualContentViewLeadingConstraint;
 
 @property (weak, nonatomic) id<DAContextMenuCellDataSource> dataSource;
 @property (weak, nonatomic) id<DAContextMenuCellDelegate> delegate;
