@@ -44,6 +44,7 @@ typedef enum {
 @interface DAContextMenuCell : UITableViewCell
 
 @property (strong, nonatomic) IBOutlet UIView *actualContentView;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *actualContentViewLeadingSpaceConstraint;
 @property (strong, nonatomic) UIColor *contextMenuBackgroundColor;
 @property (readonly, assign, nonatomic, getter = isContextMenuHidden) BOOL contextMenuHidden;
 @property (assign, nonatomic) BOOL contextMenuEnabled;
