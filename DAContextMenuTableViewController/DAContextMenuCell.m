@@ -108,6 +108,10 @@
 
 - (void)setMenuOptionsViewHidden:(BOOL)hidden animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler
 {
+    if (!self.contextMenuHidden) {
+        self.didPerformContextMenuLayout = NO;
+    }
+    
     if (self.selected) {
         [self setSelected:NO animated:NO];
     }
