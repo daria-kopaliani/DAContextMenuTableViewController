@@ -195,7 +195,6 @@
                     CGFloat indent = self.actualContentViewLeadingSpaceConstraint.constant + panAmount;
                     indent = MIN(0., indent);
                     indent = MAX(-contextMenuWidth - self.bounceValue, indent);
-                    NSLog(@"%lf", indent);
                     CGFloat velocityToTriggerAnimation = 100.;
                     if ((indent < -0.5 * contextMenuWidth && velocity.x < 0.) || velocity.x < -velocityToTriggerAnimation) {
                         self.shouldDisplayContextMenuView = YES;
